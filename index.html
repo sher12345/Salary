@@ -44,6 +44,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .logo-sub{font-size:11px;color:var(--text2);font-weight:400;margin-top:1px}
 .header-actions{display:flex;align-items:center;gap:10px}
 
+/* ── NAV TABS ── */
+.nav-tabs{display:flex;gap:4px;padding:0 28px;border-bottom:1px solid var(--border);background:var(--surface)}
+.nav-tab{padding:13px 20px;font-size:13px;font-weight:600;color:var(--text2);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--sans)}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
 /* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;border:none;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
@@ -54,14 +60,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .btn-green:hover{background:rgba(62,207,122,0.18)}
 .btn-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(242,107,91,0.2)}
 .btn-red:hover{background:rgba(242,107,91,0.18)}
+.btn-orange{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(245,166,35,0.2)}
 .btn-sm{padding:6px 12px;font-size:12px}
 .btn-icon{padding:8px;border-radius:8px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s}
 .btn-icon:hover{color:var(--text);border-color:var(--border2)}
 
 /* ── MONTH TABS ── */
-.month-bar{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;cursor:grab;user-select:none}
+.month-bar{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;cursor:grab;user-select:none}
 .month-bar:active{cursor:grabbing}
-.month-bar::-webkit-scrollbar{display:none}
 .month-bar::-webkit-scrollbar{display:none}
 .month-tab{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
 .month-tab:hover{border-color:var(--border2);color:var(--text)}
@@ -111,29 +117,91 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .emp-row:hover{border-color:var(--border2);background:var(--surface2)}
 .emp-row.selected{border-color:var(--orange);background:var(--orange-bg)}
 .emp-row.negative-row{border-left:3px solid var(--red)}
-.emp-row.transferred-row{border-left:3px solid var(--blue);background:rgba(91,156,246,0.05)}
-.emp-row.transferred-row .emp-name{color:var(--blue)}
+.emp-row.has-loan{border-left:3px solid var(--purple)}
 .emp-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;appearance:none;-webkit-appearance:none;transition:all .15s;flex-shrink:0}
 .emp-check:checked{background:var(--orange);border-color:var(--orange);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%23000' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-size:10px;background-repeat:no-repeat;background-position:center}
-
 .emp-info{}
 .emp-name{font-weight:700;font-size:13px;color:var(--text);line-height:1.2}
 .emp-desig{font-size:11px;color:var(--text3);margin-top:2px}
 .emp-note-tag{display:inline-block;font-size:10px;background:rgba(91,156,246,0.15);color:var(--blue);border-radius:4px;padding:1px 6px;margin-top:4px}
+.emp-loan-tag{display:inline-block;font-size:10px;background:rgba(167,139,250,0.15);color:var(--purple);border-radius:4px;padding:1px 6px;margin-top:4px;margin-left:4px}
 .emp-cell{font-family:var(--mono);font-size:13px;color:var(--text2);text-align:right}
 .emp-cell.highlight{color:var(--text);font-weight:600}
 .emp-cell.green{color:var(--green)}
 .emp-cell.red{color:var(--red)}
 .emp-cell.zero{color:var(--text3)}
-.emp-status{text-align:center}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
-.badge-active{background:var(--green-bg);color:var(--green)}
-.badge-inactive{background:var(--red-bg);color:var(--red)}
 .emp-actions{display:flex;gap:5px;justify-content:center;opacity:0;transition:opacity .15s;flex-wrap:wrap}
 .emp-row:hover .emp-actions{opacity:1}
 
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty-state svg{width:40px;height:40px;stroke:var(--text3);fill:none;stroke-width:1.5;margin:0 auto 12px;display:block}
+
+/* ── LOAN SYSTEM ── */
+.loan-section{padding:0 28px 28px}
+.loan-header-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.loan-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);display:flex;align-items:center;gap:8px}
+
+/* Loan Summary Stats */
+.loan-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.loan-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px}
+.loan-stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px}
+.loan-stat-val{font-family:var(--mono);font-size:18px;font-weight:600}
+.loan-stat-val.purple{color:var(--purple)}
+.loan-stat-val.orange{color:var(--orange)}
+.loan-stat-val.green{color:var(--green)}
+.loan-stat-val.red{color:var(--red)}
+
+/* Loan Table */
+.loan-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.loan-table{width:100%;border-collapse:collapse}
+.loan-table th{padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);text-align:left;border-bottom:1px solid var(--border);background:var(--surface2)}
+.loan-table th.num{text-align:right}
+.loan-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.loan-table td.num{text-align:right;font-family:var(--mono)}
+.loan-table tr:last-child td{border-bottom:none}
+.loan-table tr:hover td{background:var(--surface2)}
+.loan-emp-name{font-weight:700;color:var(--text);font-size:13px}
+.loan-emp-desig{font-size:11px;color:var(--text3);margin-top:2px}
+.loan-amt-total{color:var(--purple);font-weight:600}
+.loan-amt-paid{color:var(--green);font-weight:600}
+.loan-amt-remaining{color:var(--red);font-weight:600}
+.loan-progress-wrap{display:flex;align-items:center;gap:8px}
+.loan-progress{height:6px;background:var(--surface3);border-radius:3px;flex:1;min-width:80px;overflow:hidden}
+.loan-progress-bar{height:100%;border-radius:3px;background:var(--green);transition:width .3s}
+.loan-pct{font-size:11px;color:var(--text3);font-family:var(--mono);white-space:nowrap}
+.loan-remarks{font-size:11px;color:var(--text3);font-style:italic;max-width:180px}
+.loan-boss-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
+.loan-boss-yes{background:var(--green-bg);color:var(--green)}
+.loan-boss-no{background:var(--red-bg);color:var(--red)}
+.loan-actions{display:flex;gap:6px;justify-content:flex-end}
+
+/* Add Loan Form */
+.add-loan-form{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:18px 20px;margin-bottom:16px}
+.add-loan-form-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:14px}
+.add-loan-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.5fr auto;gap:10px;align-items:end}
+
+/* Repayment History Panel */
+.repay-panel{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:10px}
+.repay-panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+.repay-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--border);font-size:12px}
+.repay-row:last-child{border-bottom:none}
+.repay-date{color:var(--text3);font-family:var(--mono)}
+.repay-source{color:var(--blue);font-size:11px;margin-left:8px}
+.repay-amt{color:var(--green);font-family:var(--mono);font-weight:600}
+.repay-remaining{color:var(--text3);font-size:11px;font-family:var(--mono)}
+
+/* Loan Detail Modal */
+.loan-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:250;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px}
+.loan-modal-overlay.open{display:flex}
+.loan-modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.loan-modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.loan-modal-header h2{font-size:15px;font-weight:700}
+.loan-modal-header .sub{font-size:11px;color:var(--text2);margin-top:3px}
+.loan-modal-body{padding:20px}
+.loan-modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+
+/* Quick Pay row */
+.quick-pay-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;background:var(--green-bg);border:1px solid rgba(62,207,122,0.2);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
 
 /* ── EDIT DRAWER ── */
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;display:none;backdrop-filter:blur(3px)}
@@ -154,9 +222,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .form-input:focus{outline:none;border-color:var(--accent);background:var(--surface3)}
 .form-input.mono{font-family:var(--mono)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-
-/* LIVE CALC in drawer */
 .calc-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-top:8px}
 .calc-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px}
 .calc-row.divider{border-top:1px dashed var(--border2);margin-top:6px;padding-top:10px;font-weight:700}
@@ -166,10 +231,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .calc-row .val.r{color:var(--red)}
 .calc-row .val.o{color:var(--orange)}
 .calc-row .val.b{color:var(--blue)}
-
-/* SHARE SLIP */
+.calc-row .val.p{color:var(--purple)}
 .slip-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;font-size:12px;color:var(--text2);line-height:1.8;font-family:var(--mono)}
-
 .drawer-footer{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:10px;position:sticky;bottom:0;background:var(--surface)}
 
 /* ── CASH BREAKDOWN ── */
@@ -211,24 +274,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .bank-letter{font-family:'Times New Roman',Georgia,serif;padding:50px 55px;background:#fff;color:#1a1a1a;min-height:1100px}
 .bank-letter-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px;border-bottom:2px solid #1a1a1a;padding-bottom:20px}
 .bank-letter-logo{display:flex;align-items:center;gap:12px}
-.bank-letter-logo-mark{width:80px;height:50px;display:flex;align-items:center;justify-content:center}
-.bank-letter-logo-mark img{width:100%;height:100%;object-fit:contain}
 .bank-letter-logo-text{font-weight:700;font-size:20px;color:#1a1a1a}
 .bank-letter-logo-sub{font-size:11px;color:#666;margin-top:2px;font-family:var(--sans)}
 .bank-letter-date{font-size:13px;color:#444;text-align:right;font-family:var(--sans)}
 .bank-letter-date strong{display:block;font-size:14px;color:#1a1a1a;margin-bottom:4px}
-
 .bank-letter-subject{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.5px;border-left:4px solid #e8c547;padding-left:12px}
 .bank-letter-salutation{font-size:15px;margin-bottom:16px;color:#1a1a1a}
 .bank-letter-body{font-size:14px;line-height:1.8;color:#333;margin-bottom:20px;text-align:justify}
-
 .bank-letter-section-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#1a1a1a;margin:24px 0 12px;padding-bottom:6px;border-bottom:1px solid #ddd}
-
 .bank-letter-table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:13px}
 .bank-letter-table td{padding:10px 14px;border:1px solid #ddd;vertical-align:top}
 .bank-letter-table td:first-child{font-weight:700;background:#f8f8f8;width:35%;color:#1a1a1a}
-.bank-letter-table td:last-child{color:#333}
-
 .bank-letter-footer{margin-top:40px;padding-top:30px;border-top:1px solid #ddd}
 .bank-letter-stamp-area{display:flex;justify-content:space-between;align-items:flex-end;margin-top:30px}
 .bank-letter-stamp-box{width:140px;height:140px;border:2px dashed #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px;text-align:center;padding:20px;flex-shrink:0}
@@ -236,57 +292,28 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .bank-letter-signature-line{border-bottom:1px solid #1a1a1a;width:200px;margin-bottom:8px;display:inline-block}
 .bank-letter-signature-name{font-weight:700;font-size:14px;color:#1a1a1a}
 .bank-letter-signature-title{font-size:11px;color:#666;margin-top:2px}
-
 .bank-letter-contact{margin-top:20px;font-size:11px;color:#666;font-family:var(--sans);text-align:center;padding-top:16px;border-top:1px solid #eee}
-
-/* ── PAYBACK TRACKER ── */
-.payback-section{padding:0 28px 20px}
-.payback-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px 20px}
-.payback-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.payback-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.payback-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;position:relative}
-.payback-item.negative{border-left:3px solid var(--red)}
-.payback-item.paid-off{border-left:3px solid var(--green);opacity:0.6}
-.payback-item-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.payback-item-name{font-weight:700;font-size:13px;color:var(--text)}
-.payback-item-desig{font-size:10px;color:var(--text3);margin-top:2px}
-.payback-item-amt{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)}
-.payback-item-amt.paid{color:var(--green)}
-.payback-item-note{font-size:11px;color:var(--text3);margin-top:6px;font-style:italic}
-.payback-item-actions{display:flex;gap:6px;margin-top:10px}
-.payback-empty{text-align:center;padding:30px;color:var(--text3);font-size:13px}
-
-.payback-form{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
-.payback-form-row{display:grid;grid-template-columns:1fr 1fr 120px auto;gap:10px;align-items:end}
-.payback-form-row .form-group{margin-bottom:0}
-.payback-form-row .form-input{background:var(--surface3)}
-.payback-history{font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
-.payback-history-item{display:flex;justify-content:space-between;padding:3px 0}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface3);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;z-index:999;transform:translateY(20px);opacity:0;transition:all .25s;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.green{border-color:rgba(62,207,122,0.4);color:var(--green)}
 .toast.orange{border-color:rgba(245,166,35,0.4);color:var(--orange)}
+.toast.purple{border-color:rgba(167,139,250,0.4);color:var(--purple)}
+
+/* page/tab sections */
+.page-section{display:none}
+.page-section.active{display:block}
 
 @media print{
   .header,.month-bar,.toolbar,.bulk-banner,.emp-actions,.drawer-overlay,.modal-overlay,.toast,.btn-ghost,.btn-icon,
-  .emp-check,.bulk-mode-toggle,.filter-select,.search-wrap,.btn-red{display:none!important}
+  .emp-check,.bulk-mode-toggle,.filter-select,.search-wrap,.btn-red,.nav-tabs,.loan-section{display:none!important}
   body{background:white;color:#000}
   .stats-row{grid-template-columns:repeat(3,1fr)}
   .stat-card{border:1px solid #ddd;background:#fff}
   .emp-row{border:1px solid #ddd;background:#fff;page-break-inside:avoid}
 }
-
-/* Print styles for bank letter */
-@media print {
-  .letter-modal-overlay {position:static;display:block;background:none;padding:0}
-  .letter-modal {box-shadow:none;max-width:none;width:100%;border-radius:0}
-  .letter-modal-header, .letter-modal-footer {display:none!important}
-  .bank-letter {padding:30px 40px;min-height:auto}
-}
 </style>
-<base target="_blank">
 </head>
 <body>
 
@@ -296,7 +323,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
     <div class="logo-mark">OX</div>
     <div>
       <div class="logo-text">OvenX Payroll</div>
-      <div class="logo-sub">Multan — Salary Management</div>
+      <div class="logo-sub">Multan — Salary &amp; Loan Management</div>
     </div>
   </div>
   <div class="header-actions">
@@ -312,8 +339,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   </div>
 </div>
 
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="switchTab('salary',this)">💰 Salary Payroll</button>
+  <button class="nav-tab" onclick="switchTab('loans',this)">📋 Loan &amp; Debt Ledger</button>
+</div>
+
 <!-- MONTH TABS -->
 <div class="month-bar" id="monthBar"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!--             SALARY TAB                      -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-salary" class="page-section active">
 
 <!-- STATS -->
 <div class="stats-row">
@@ -332,34 +370,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
       Cash Breakdown — Who gets what
     </div>
     <div class="cash-grid" id="cashGrid"></div>
-  </div>
-</div>
-
-<!-- PAYBACK TRACKER -->
-<div class="payback-section">
-  <div class="payback-card">
-    <div class="payback-title">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Payback Tracker — Who Owes You
-    </div>
-    <div class="payback-form">
-      <div class="payback-form-row">
-        <div class="form-group">
-          <label class="form-label">Employee</label>
-          <select class="form-input" id="pbEmployee"></select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amount Received (Rs)</label>
-          <input class="form-input mono" type="number" id="pbAmount" placeholder="e.g. 5000">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input class="form-input mono" type="date" id="pbDate">
-        </div>
-        <button class="btn btn-green btn-sm" onclick="recordPayback()" style="margin-bottom:2px">Record</button>
-      </div>
-    </div>
-    <div class="payback-grid" id="paybackGrid"></div>
   </div>
 </div>
 
@@ -411,6 +421,109 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   <div id="empList"></div>
 </div>
 
+</div><!-- /tab-salary -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!--             LOAN TAB                        -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-loans" class="page-section">
+<div class="loan-section">
+
+  <!-- Loan Stats -->
+  <div style="padding:20px 0 0">
+    <div class="loan-stats">
+      <div class="loan-stat"><div class="loan-stat-label">Total Loaned Out</div><div class="loan-stat-val purple" id="ls-total">—</div></div>
+      <div class="loan-stat"><div class="loan-stat-label">Total Recovered</div><div class="loan-stat-val green" id="ls-recovered">—</div></div>
+      <div class="loan-stat"><div class="loan-stat-label">Outstanding Balance</div><div class="loan-stat-val red" id="ls-outstanding">—</div></div>
+      <div class="loan-stat"><div class="loan-stat-label">Active Debtors</div><div class="loan-stat-val orange" id="ls-count">—</div></div>
+    </div>
+  </div>
+
+  <!-- Add Loan Form -->
+  <div class="add-loan-form">
+    <div class="add-loan-form-title">+ Issue New Loan / Record Existing Debt</div>
+    <div class="add-loan-grid">
+      <div class="form-group">
+        <label class="form-label">Employee</label>
+        <select class="form-input" id="ln-employee"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Loan Amount (Rs)</label>
+        <input class="form-input mono" type="number" id="ln-amount" placeholder="e.g. 20000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date Issued</label>
+        <input class="form-input mono" type="date" id="ln-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Monthly Deduction (Rs)</label>
+        <input class="form-input mono" type="number" id="ln-monthly-deduct" placeholder="e.g. 5000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Remarks</label>
+        <input class="form-input" type="text" id="ln-remarks" placeholder="e.g. Personal loan, advance overpay...">
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">&nbsp;</label>
+        <button class="btn btn-accent" onclick="addLoan()" style="width:100%;justify-content:center">Issue Loan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loan Table -->
+  <div class="loan-header-bar">
+    <div class="loan-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Active Debt Ledger
+    </div>
+    <div style="display:flex;gap:8px">
+      <select class="filter-select" id="loanStatusFilter" onchange="renderLoanTable()" style="min-width:120px">
+        <option value="all">All Loans</option>
+        <option value="active">Active</option>
+        <option value="cleared">Cleared</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="autoDeductLoans()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Auto-Deduct This Month
+      </button>
+    </div>
+  </div>
+  <div class="loan-table-wrap">
+    <table class="loan-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th class="num">Loan Issued</th>
+          <th class="num">Advances Till Date</th>
+          <th class="num">Salary Remaining</th>
+          <th class="num">Total Paid Back</th>
+          <th class="num">Balance Remaining</th>
+          <th>Progress</th>
+          <th>Boss Will Pay?</th>
+          <th>Remarks</th>
+          <th class="num">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="loanTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Cleared Loans (collapsed) -->
+  <div style="margin-top:16px">
+    <button class="btn btn-ghost btn-sm" onclick="toggleCleared()" id="clearedToggle">Show Cleared Loans (0)</button>
+    <div id="clearedLoansSection" style="display:none;margin-top:12px">
+      <div class="loan-table-wrap">
+        <table class="loan-table">
+          <thead><tr><th>Employee</th><th class="num">Total Loaned</th><th class="num">Total Paid</th><th>Cleared On</th><th>Remarks</th></tr></thead>
+          <tbody id="clearedLoanBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /tab-loans -->
+
 <!-- EDIT DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
   <div class="drawer" id="drawer">
@@ -424,116 +537,67 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
     <div class="drawer-body">
       <div class="drawer-section">
         <div class="drawer-section-title">Basic Info</div>
-        <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input class="form-input" id="d-name" oninput="drawerCalc()">
-        </div>
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="d-name" oninput="drawerCalc()"></div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Designation</label>
-            <input class="form-input" id="d-desig" oninput="drawerCalc()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Status</label>
-            <select class="form-input" id="d-status">
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
+          <div class="form-group"><label class="form-label">Designation</label><input class="form-input" id="d-desig" oninput="drawerCalc()"></div>
+          <div class="form-group"><label class="form-label">Status</label><select class="form-input" id="d-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
         </div>
       </div>
-
       <div class="drawer-section">
-        <div class="drawer-section-title">Salary & Days</div>
+        <div class="drawer-section-title">Salary &amp; Days</div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Monthly Salary (Rs)</label>
-            <input class="form-input mono" type="number" id="d-salary" oninput="drawerCalc()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Working Days</label>
-            <input class="form-input mono" type="number" id="d-days" oninput="drawerCalc()">
-          </div>
+          <div class="form-group"><label class="form-label">Monthly Salary (Rs)</label><input class="form-input mono" type="number" id="d-salary" oninput="drawerCalc()"></div>
+          <div class="form-group"><label class="form-label">Working Days</label><input class="form-input mono" type="number" id="d-days" oninput="drawerCalc()"></div>
         </div>
       </div>
-
-            <div class="drawer-section">
+      <div class="drawer-section">
         <div class="drawer-section-title">Deductions</div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Advance + Food (Rs)</label>
-            <input class="form-input mono" type="number" id="d-advance" oninput="drawerCalc()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Fine / Uniform (Rs)</label>
-            <input class="form-input mono" type="number" id="d-fine" oninput="drawerCalc()">
-          </div>
+          <div class="form-group"><label class="form-label">Advance + Food (Rs)</label><input class="form-input mono" type="number" id="d-advance" oninput="drawerCalc()"></div>
+          <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="d-fine" oninput="drawerCalc()"></div>
         </div>
       </div>
-
       <div class="drawer-section">
         <div class="drawer-section-title">Add Money</div>
-        <div style="background:var(--green-bg);border:1px solid rgba(62,207,122,0.2);border-radius:var(--r);padding:14px 16px;margin-bottom:12px">
+        <div style="background:var(--green-bg);border:1px solid rgba(62,207,122,0.2);border-radius:var(--r);padding:14px 16px">
           <div class="form-row" style="margin-bottom:10px">
-            <div class="form-group" style="margin-bottom:0">
-              <label class="form-label" style="color:var(--green)">Amount to Add (Rs)</label>
-              <input class="form-input mono" type="number" id="d-addmoney" placeholder="e.g. 5000" oninput="drawerCalc()">
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label class="form-label" style="color:var(--green)">Reason</label>
-              <input class="form-input" type="text" id="d-addreason" placeholder="e.g. Bonus, overtime...">
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text3);line-height:1.5">
-            This amount will be <strong style="color:var(--green)">added</strong> to the net payable. Use for bonuses, overtime, or any extra payment.
+            <div class="form-group" style="margin-bottom:0"><label class="form-label" style="color:var(--green)">Amount to Add (Rs)</label><input class="form-input mono" type="number" id="d-addmoney" placeholder="e.g. 5000" oninput="drawerCalc()"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label" style="color:var(--green)">Reason</label><input class="form-input" type="text" id="d-addreason" placeholder="e.g. Bonus, overtime..."></div>
           </div>
         </div>
       </div>
-
+      <div class="drawer-section">
+        <div class="drawer-section-title">Loan Deduction This Month</div>
+        <div id="drawerLoanInfo" style="background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--text2)">
+          No active loan for this employee.
+        </div>
+      </div>
       <div class="drawer-section">
         <div class="drawer-section-title">Live Calculation</div>
         <div class="calc-box" id="calcBox"></div>
       </div>
-
       <div class="drawer-section">
         <div class="drawer-section-title">Note</div>
-        <div class="form-group">
-          <input class="form-input" id="d-note" placeholder="e.g. 5k advance monthly, owes balance...">
-        </div>
+        <div class="form-group"><input class="form-input" id="d-note" placeholder="e.g. 5k advance monthly, owes balance..."></div>
       </div>
-
       <div class="drawer-section">
-                <div class="drawer-section-title">Salary Slip</div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">
-          Generate a formal employment verification letter for bank account opening. Includes official stamp area, salary details, and company letterhead.
-        </div>
+        <div class="drawer-section-title">Salary Slip</div>
         <button class="btn btn-accent" onclick="openBankLetterModal()" style="width:100%;justify-content:center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           Generate Salary Slip
         </button>
       </div>
-
       <div class="drawer-section">
         <div class="drawer-section-title">Share Slip</div>
         <div class="slip-box" id="slipBox"></div>
         <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          <button class="btn btn-green btn-sm" onclick="shareWhatsApp()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            WhatsApp
-          </button>
-          <button class="btn btn-ghost btn-sm" onclick="copySlip()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copy Slip
-          </button>
+          <button class="btn btn-green btn-sm" onclick="shareWhatsApp()">WhatsApp</button>
+          <button class="btn btn-ghost btn-sm" onclick="copySlip()">Copy Slip</button>
         </div>
       </div>
     </div>
-            <div class="drawer-footer">
-      <button class="btn btn-red btn-sm" id="drawerDeleteBtn" onclick="deleteEmployeeWithPassword()">Remove Employee</button>
-      <button class="btn btn-sm" onclick="transferCurrentEmployee()" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(91,156,246,0.2)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-        Transfer to Next Month
-      </button>
+    <div class="drawer-footer">
+      <button class="btn btn-red btn-sm" id="drawerDeleteBtn">Remove</button>
       <div style="flex:1"></div>
       <button class="btn btn-ghost" onclick="closeDrawerForce()">Cancel</button>
       <button class="btn btn-accent" onclick="saveDrawer()">Save Changes</button>
@@ -544,10 +608,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 <!-- ADD MODAL -->
 <div class="modal-overlay" id="addModal">
   <div class="modal">
-    <div class="modal-header">
-      <h2>Add New Employee</h2>
-      <button class="drawer-close" onclick="closeAddModal()">✕</button>
-    </div>
+    <div class="modal-header"><h2>Add New Employee</h2><button class="drawer-close" onclick="closeAddModal()">✕</button></div>
     <div class="modal-body">
       <div class="form-row">
         <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="m-name" placeholder="e.g. Bilal Ahmed"></div>
@@ -562,16 +623,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
         <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="m-fine" value="0"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Status</label>
-          <select class="form-input" id="m-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
-        </div>
+        <div class="form-group"><label class="form-label">Status</label><select class="form-input" id="m-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
         <div class="form-group"><label class="form-label">Note (optional)</label><input class="form-input" id="m-note" placeholder="e.g. 5k advance monthly"></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Date of Joining</label><input class="form-input mono" type="date" id="m-joining" value="2024-01-01"></div>
-        <div class="form-group"><label class="form-label">Employment Type</label>
-          <select class="form-input" id="m-type"><option value="Permanent">Permanent</option><option value="Contractual">Contractual</option><option value="Part-time">Part-time</option></select>
-        </div>
+        <div class="form-group"><label class="form-label">Employment Type</label><select class="form-input" id="m-type"><option value="Permanent">Permanent</option><option value="Contractual">Contractual</option><option value="Part-time">Part-time</option></select></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -584,15 +641,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 <!-- PASSWORD MODAL -->
 <div class="modal-overlay" id="passwordModal">
   <div class="modal" style="max-width:360px">
-    <div class="modal-header">
-      <h2>Admin Override</h2>
-      <button class="drawer-close" onclick="closePasswordModal()">✕</button>
-    </div>
+    <div class="modal-header"><h2 id="pwModalTitle">Admin Override</h2><button class="drawer-close" onclick="closePasswordModal()">✕</button></div>
     <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Enter Password</label>
-        <input class="form-input mono" type="password" id="adminPassword" placeholder="••••" onkeydown="if(event.key==='Enter')confirmPassword()">
-      </div>
+      <div class="form-group"><label class="form-label">Enter Password</label><input class="form-input mono" type="password" id="adminPassword" placeholder="••••" onkeydown="if(event.key==='Enter')confirmPassword()"></div>
       <div id="passwordError" style="color:var(--red);font-size:12px;margin-top:8px;display:none">Wrong password</div>
     </div>
     <div class="modal-footer">
@@ -602,25 +653,31 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   </div>
 </div>
 
+<!-- LOAN DETAIL MODAL -->
+<div class="loan-modal-overlay" id="loanDetailModal" onclick="closeLoanModal(event)">
+  <div class="loan-modal" onclick="event.stopPropagation()">
+    <div class="loan-modal-header">
+      <div>
+        <h2 id="lm-title">Loan Detail</h2>
+        <div class="sub" id="lm-sub"></div>
+      </div>
+      <button class="drawer-close" onclick="closeLoanModalForce()">✕</button>
+    </div>
+    <div class="loan-modal-body" id="loanModalBody"></div>
+    <div class="loan-modal-footer">
+      <button class="btn btn-ghost" onclick="closeLoanModalForce()">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- BANK LETTER MODAL -->
 <div class="letter-modal-overlay" id="bankLetterModal" onclick="closeBankLetterModal(event)">
   <div class="letter-modal" onclick="event.stopPropagation()">
-    <div class="letter-modal-header">
-      <h2>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Salary Slip — Employment Verification
-      </h2>
-      <button class="drawer-close" onclick="closeBankLetterModalForce()">✕</button>
-    </div>
-    <div class="letter-modal-body">
-      <div id="bankLetterContent"></div>
-    </div>
+    <div class="letter-modal-header"><h2>Salary Slip — Employment Verification</h2><button class="drawer-close" onclick="closeBankLetterModalForce()">✕</button></div>
+    <div class="letter-modal-body"><div id="bankLetterContent"></div></div>
     <div class="letter-modal-footer">
       <button class="btn btn-ghost" onclick="closeBankLetterModalForce()">Close</button>
-      <button class="btn btn-accent" onclick="printBankLetter()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print / Save PDF
-      </button>
+      <button class="btn btn-accent" onclick="window.print()">Print / Save PDF</button>
     </div>
   </div>
 </div>
@@ -628,8 +685,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 <div class="toast" id="toast"></div>
 
 <script>
+// ══════════════════════════════════════════════
+//  CONSTANTS & CONFIG
+// ══════════════════════════════════════════════
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const YEARS = [2025,2026,2027];
+const ADMIN_PASSWORD = '7530';
+const COMPANY = {
+  name:"OvenX-Pakistan", businessName:"The OvenX",
+  address:"Block A, Sheikh Abdul Hameed Rd, A Block Gulgasht Colony, Multan, Punjab 60700, Pakistan",
+  phone:"0300-2450301", website:"theovenx.com", type:"Restaurant / Food Service",
+  managerName:"Sher Muhammad Bazeed Khan", managerTitle:"Restaurant General Manager"
+};
+
 const DEFAULT_EMPLOYEES = [
   {id:1,  name:"Sher Muhammad Bazeed Khan", desig:"Restaurant G Manager", monthly:65000, days:30, advance:4651,  fine:0,   addMoney:0, addReason:'', status:"Active",   note:"5k advance", joining:"2024-08-24", type:"Permanent"},
   {id:2,  name:"Saleem Mukhtiyar",          desig:"Cashier",              monthly:30000, days:34, advance:2146,  fine:0,   addMoney:0, addReason:'', status:"Active",   note:"", joining:"2024-01-01", type:"Permanent"},
@@ -659,314 +727,31 @@ const DEFAULT_EMPLOYEES = [
   {id:35, name:"Zubair",                 desig:"Cook",                   monthly:22000, days:30, advance:2379,  fine:100, addMoney:0, addReason:'', status:"Active",   note:"", joining:"2024-01-01", type:"Permanent"},
 ];
 
-// ── COMPANY INFO ──
-const COMPANY = {
-  name: "OvenX-Pakistan",
-  businessName: "The OvenX",
-  address: "Block A, Sheikh Abdul Hameed Rd, A Block Gulgasht Colony, Multan, Punjab 60700, Pakistan",
-  phone: "0300-2450301",
-  website: "theovenx.com",
-  type: "Restaurant / Food Service",
-  managerName: "Sher Muhammad Bazeed Khan",
-  managerTitle: "Restaurant General Manager"
-};
-
-// ── PAYBACK STORAGE ──
-function pbStorageKey(month){ return 'ovenx_pb_' + month; }
-function pbHistoryKey(month){ return 'ovenx_pbhist_' + month; }
-
-function loadPaybackData(month){
-  const raw = localStorage.getItem(pbStorageKey(month));
-  if(raw) return JSON.parse(raw);
-  // Auto-carry from previous month
-  const prev = getPrevMonth(month);
-  if(prev){
-    const prevRaw = localStorage.getItem(pbStorageKey(prev));
-    if(prevRaw){
-      const prevData = JSON.parse(prevRaw);
-      // Only carry forward employees who still owe (negative net from prev month)
-      const prevEmps = loadEmployees(prev);
-      const carried = {};
-      Object.keys(prevData).forEach(id => {
-        const emp = prevEmps.find(e => e.id == id);
-        if(emp){
-          const c = calcEmp(emp);
-          if(c.net < 0){
-            carried[id] = {
-              amount: prevData[id].amount,
-              original: prevData[id].original || prevData[id].amount,
-              name: emp.name,
-              desig: emp.desig,
-              note: prevData[id].note || ''
-            };
-          }
-        }
-      });
-      if(Object.keys(carried).length > 0){
-        savePaybackData(month, carried);
-        return carried;
-      }
-    }
-  }
-  return {};
-}
-
-function savePaybackData(month, data){ localStorage.setItem(pbStorageKey(month), JSON.stringify(data)); }
-function loadPbHistory(month){
-  const raw = localStorage.getItem(pbHistoryKey(month));
-  return raw ? JSON.parse(raw) : [];
-}
-function savePbHistory(month, hist){ localStorage.setItem(pbHistoryKey(month), JSON.stringify(hist)); }
-
-function getPaybackData(){
-  return loadPaybackData(currentMonth);
-}
-
-function initPaybackFromSalaries(){
-  // Auto-create payback entries from current month negative nets
-  const emps = getEmps();
-  const pb = getPaybackData();
-  let changed = false;
-  emps.forEach(e => {
-    const c = calcEmp(e);
-    if(c.net < 0 && !pb[e.id]){
-      pb[e.id] = {
-        amount: Math.abs(c.net),
-        original: Math.abs(c.net),
-        name: e.name,
-        desig: e.desig,
-        note: e.note || ''
-      };
-      changed = true;
-    }
-  });
-  if(changed) savePaybackData(currentMonth, pb);
-  return pb;
-}
-
-function recordPayback(){
-  const empId = document.getElementById('pbEmployee').value;
-  const amount = +document.getElementById('pbAmount').value || 0;
-  const date = document.getElementById('pbDate').value || new Date().toISOString().split('T')[0];
-  
-  if(!empId || !amount){ alert('Select employee and enter amount'); return; }
-  
-  const pb = getPaybackData();
-  if(!pb[empId]){ alert('This employee does not have an outstanding balance'); return; }
-  
-  pb[empId].amount = Math.max(0, pb[empId].amount - amount);
-  
-  const hist = loadPbHistory(currentMonth);
-  hist.push({
-    empId: +empId,
-    name: pb[empId].name,
-    amount: amount,
-    date: date,
-    remaining: pb[empId].amount
-  });
-  
-  savePaybackData(currentMonth, pb);
-  savePbHistory(currentMonth, hist);
-  
-  // Also add as advance in current month salary so it reflects in totals
-  mutateEmps(emps => {
-    const emp = emps.find(e => e.id == empId);
-    if(emp){
-      emp.advance = (emp.advance || 0) + amount;
-      emp.note = (emp.note ? emp.note + ' | ' : '') + 'Paid back ' + pkr(amount);
-    }
-  });
-  
-  document.getElementById('pbAmount').value = '';
-  renderPaybackTracker();
-  renderAll();
-  toast('Payback recorded: ' + pkr(amount), 'green');
-}
-
-function addToPayback(empId, amount, reason){
-  const pb = getPaybackData();
-  const emps = getEmps();
-  const emp = emps.find(e => e.id == empId);
-  if(!emp) return;
-  
-  if(!pb[empId]){
-    pb[empId] = {
-      amount: 0,
-      original: 0,
-      name: emp.name,
-      desig: emp.desig,
-      note: ''
-    };
-  }
-  
-  pb[empId].amount += amount;
-  pb[empId].original = pb[empId].amount;
-  if(reason) pb[empId].note = reason;
-  
-  savePaybackData(currentMonth, pb);
-  renderPaybackTracker();
-}
-
-function removeFromPayback(empId, amount){
-  const pb = getPaybackData();
-  if(!pb[empId]) return;
-  
-  pb[empId].amount = Math.max(0, pb[empId].amount - amount);
-  savePaybackData(currentMonth, pb);
-  renderPaybackTracker();
-}
-
-function deletePaybackEntry(empId){
-  if(!confirm('Remove this payback tracking entry?')) return;
-  const pb = getPaybackData();
-  delete pb[empId];
-  savePaybackData(currentMonth, pb);
-  renderPaybackTracker();
-  toast('Payback entry removed', 'orange');
-}
-
-function renderPaybackTracker(){
-  const pb = initPaybackFromSalaries();
-  const grid = document.getElementById('paybackGrid');
-  const select = document.getElementById('pbEmployee');
-  const hist = loadPbHistory(currentMonth);
-  
-  grid.innerHTML = '';
-  select.innerHTML = '<option value="">Select employee...</option>';
-  
-  const entries = Object.entries(pb).filter(([id, data]) => data.amount > 0);
-  
-  if(entries.length === 0){
-    grid.innerHTML = '<div class="payback-empty">No outstanding balances. Everyone is clear!</div>';
-  }
-  
-  entries.forEach(([id, data]) => {
-    const paidAmount = data.original - data.amount;
-    const percent = data.original > 0 ? Math.round((paidAmount / data.original) * 100) : 0;
-    
-    const d = document.createElement('div');
-    d.className = 'payback-item negative';
-    d.innerHTML = `
-      <div class="payback-item-header">
-        <div>
-          <div class="payback-item-name">${data.name}</div>
-          <div class="payback-item-desig">${data.desig}</div>
-        </div>
-        <div class="payback-item-amt">${pkr(data.amount)}</div>
-      </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">
-        Original: ${pkr(data.original)} | Paid: ${pkr(paidAmount)} (${percent}%)
-      </div>
-      ${data.note ? `<div class="payback-item-note">${data.note}</div>` : ''}
-      <div class="payback-item-actions">
-        <button class="btn btn-green btn-sm" onclick="quickPayback(${id})">Quick Pay</button>
-        <button class="btn btn-ghost btn-sm" onclick="deletePaybackEntry(${id})">Remove</button>
-      </div>
-      ${hist.filter(h => h.empId == id).length > 0 ? `
-        <div class="payback-history">
-          ${hist.filter(h => h.empId == id).map(h => 
-            `<div class="payback-history-item"><span>${h.date}</span><span>-${pkr(h.amount)} (left: ${pkr(h.remaining)})</span></div>`
-          ).join('')}
-        </div>
-      ` : ''}
-    `;
-    grid.appendChild(d);
-    
-    // Add to select dropdown
-    const opt = document.createElement('option');
-    opt.value = id;
-    opt.textContent = data.name + ' (' + pkr(data.amount) + ')';
-    select.appendChild(opt);
-  });
-  
-  // Also add employees with negative net who aren't in pb yet
-  const emps = getEmps();
-  emps.forEach(e => {
-    const c = calcEmp(e);
-    if(c.net < 0 && !pb[e.id]){
-      const opt = document.createElement('option');
-      opt.value = e.id;
-      opt.textContent = e.name + ' (' + pkr(Math.abs(c.net)) + ' — auto)';
-      select.appendChild(opt);
-    }
-  });
-}
-
-function quickPayback(empId){
-  const pb = getPaybackData();
-  if(!pb[empId]) return;
-  document.getElementById('pbEmployee').value = empId;
-  document.getElementById('pbAmount').value = pb[empId].amount;
-  document.getElementById('pbAmount').focus();
-}
-
-// ── STATE ──
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
 let currentMonth = 'April-2026';
 let bulkMode = false;
 let selectedIds = new Set();
 let drawerIdx = null;
-let nextId = 100;
+let pendingSave = null;
+let pendingDelete = null;
+let activeLoanId = null; // for loan modal
 
+// ══════════════════════════════════════════════
+//  SALARY STORAGE
+// ══════════════════════════════════════════════
 function storageKey(month){ return 'ovenx_v2_' + month; }
 
 function loadEmployees(month){
   const raw = localStorage.getItem(storageKey(month));
-  if(raw){
-    let emps = JSON.parse(raw);
-    // Auto-remove transferred employees who should only appear for one month
-    emps = emps.filter(e => {
-      if(e.transferred && e.transferSource){
-        // Check if this month is AFTER the transfer target month
-        const [currMn, currYr] = month.split('-');
-        const [transMn, transYr] = e.transferSource.split('-');
-        const currMi = MONTHS.indexOf(currMn);
-        const transMi = MONTHS.indexOf(transMn);
-        const currYear = parseInt(currYr);
-        const transYear = parseInt(transYr);
-        
-        // Calculate month difference
-        const currTotal = currYear * 12 + currMi;
-        const transTotal = transYear * 12 + transMi;
-        
-        // Remove if current month is more than 1 month after transfer source
-        if(currTotal > transTotal + 1){
-          return false; // Remove this employee
-        }
-      }
-      return true;
-    });
-    return emps;
-  }
+  if(raw) return JSON.parse(raw);
   if(month === 'April-2026') return JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES));
-  // Copy from previous month if new
   const prev = getPrevMonth(month);
   if(prev){
     const prevRaw = localStorage.getItem(storageKey(prev));
     if(prevRaw){
-      let copied = JSON.parse(prevRaw);
-      // Filter out transferred employees before copying forward
-      copied = copied.filter(e => {
-        if(e.transferred && e.transferSource){
-          const [prevMn, prevYr] = prev.split('-');
-          const [transMn, transYr] = e.transferSource.split('-');
-          const prevMi = MONTHS.indexOf(prevMn);
-          const transMi = MONTHS.indexOf(transMn);
-          const prevYear = parseInt(prevYr);
-          const transYear = parseInt(transYr);
-          const prevTotal = prevYear * 12 + prevMi;
-          const transTotal = transYear * 12 + transMi;
-          // Keep only if prev month is at most 1 month after transfer
-          return prevTotal <= transTotal + 1;
-        }
-        return true;
-      });
-      copied = copied.map(e => {
-        // If transferred employee, keep their transferred state but reset others
-        if(e.transferred){
-          return {...e, advance:0, fine:0, note: e.note || '', days: 0};
-        }
-        return {...e, advance:0, fine:0, note:'', days:30};
-      });
+      const copied = JSON.parse(prevRaw).map(e=>({...e,advance:0,fine:0,note:'',days:30,addMoney:0,addReason:''}));
       saveEmployees(month, copied);
       return copied;
     }
@@ -984,7 +769,6 @@ function getPrevMonth(m){
 }
 
 function saveEmployees(month, emps){ localStorage.setItem(storageKey(month), JSON.stringify(emps)); }
-
 function getEmps(){ return loadEmployees(currentMonth); }
 function mutateEmps(fn){
   const emps = getEmps();
@@ -993,21 +777,61 @@ function mutateEmps(fn){
 }
 
 function calcEmp(e){
-  // Transferred employee — only show pending amount, NO new salary
-  if(e.transferred){
-    const net = (e.addMoney||0) - (e.advance||0) - (e.fine||0);
-    return { gross: 0, net: net };
-  }
   const perDay = e.monthly / 30;
   const gross = Math.round(perDay * e.days);
   const net = gross - (e.advance||0) - (e.fine||0) + (e.addMoney||0);
   return { gross, net };
 }
 
-function pkr(n){ return 'Rs ' + Math.round(Math.abs(n)).toLocaleString('en-PK'); }
-function pkrShort(n){ const a=Math.round(Math.abs(n)); return a>=1000?(a/1000).toFixed(1)+'k':a.toString(); }
+// ══════════════════════════════════════════════
+//  LOAN STORAGE
+// ══════════════════════════════════════════════
+// Loans are GLOBAL (not per month) — they track the whole lifecycle
+// Key: 'ovenx_loans'  Value: array of loan objects
+// Each repayment logs which month it was deducted from
 
-// ── MONTH TABS ──
+function loadLoans(){
+  const raw = localStorage.getItem('ovenx_loans');
+  return raw ? JSON.parse(raw) : [];
+}
+function saveLoans(loans){ localStorage.setItem('ovenx_loans', JSON.stringify(loans)); }
+
+function getLoanForEmployee(empId){
+  return loadLoans().filter(l => l.empId == empId && l.status === 'active');
+}
+
+function getTotalLoanRemaining(empId){
+  return getLoanForEmployee(empId).reduce((s,l) => s + l.remaining, 0);
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function pkr(n){ return 'Rs ' + Math.round(Math.abs(n)).toLocaleString('en-PK'); }
+function pkrShort(n){ const a=Math.round(Math.abs(n)); return a>=1000?(a/1000).toFixed(1)+'k':String(a); }
+function fmt(n){ return Math.round(Math.abs(n)).toLocaleString('en-PK'); }
+let toastTimer;
+function toast(msg, type='green'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.className='toast',2800);
+}
+
+// ══════════════════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(tab, btn){
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if(tab === 'loans') renderLoanTab();
+}
+
+// ══════════════════════════════════════════════
+//  MONTH TABS
+// ══════════════════════════════════════════════
 function buildMonthTabs(){
   const bar = document.getElementById('monthBar');
   bar.innerHTML = '';
@@ -1017,17 +841,15 @@ function buildMonthTabs(){
       const btn = document.createElement('button');
       btn.className = 'month-tab' + (key===currentMonth?' active':'');
       btn.textContent = mn.slice(0,3)+' '+yr;
-            btn.onclick = () => switchMonth(key);
+      btn.onclick = () => switchMonth(key);
       bar.appendChild(btn);
     });
   });
-  
-  // Enable drag-to-scroll for month bar
-  let isDown = false, startX, scrollLeft;
-  bar.addEventListener('mousedown', (e) => { isDown = true; bar.classList.add('active'); startX = e.pageX - bar.offsetLeft; scrollLeft = bar.scrollLeft; });
-  bar.addEventListener('mouseleave', () => { isDown = false; bar.classList.remove('active'); });
-  bar.addEventListener('mouseup', () => { isDown = false; bar.classList.remove('active'); });
-  bar.addEventListener('mousemove', (e) => { if(!isDown) return; e.preventDefault(); const x = e.pageX - bar.offsetLeft; const walk = (x - startX) * 2; bar.scrollLeft = scrollLeft - walk; });
+  let isDown=false, startX, scrollLeft;
+  bar.addEventListener('mousedown', e=>{ isDown=true; startX=e.pageX-bar.offsetLeft; scrollLeft=bar.scrollLeft; });
+  bar.addEventListener('mouseleave', ()=>isDown=false);
+  bar.addEventListener('mouseup', ()=>isDown=false);
+  bar.addEventListener('mousemove', e=>{ if(!isDown)return; e.preventDefault(); bar.scrollLeft=scrollLeft-(e.pageX-bar.offsetLeft-startX)*2; });
 }
 
 function switchMonth(key){
@@ -1035,19 +857,17 @@ function switchMonth(key){
   selectedIds.clear();
   buildMonthTabs();
   renderAll();
-  // Update payback date default
-  document.getElementById('pbDate').value = new Date().toISOString().split('T')[0];
 }
 
-// ── STATS ──
+// ══════════════════════════════════════════════
+//  STATS
+// ══════════════════════════════════════════════
 function renderStats(emps){
   let gross=0,payable=0,advance=0,takeback=0;
   emps.forEach(e=>{
     const c=calcEmp(e);
-    gross+=c.gross;
-    advance+=(e.advance||0)+(e.fine||0);
-    if(c.net>0) payable+=c.net;
-    else takeback+=Math.abs(c.net);
+    gross+=c.gross; advance+=(e.advance||0)+(e.fine||0);
+    if(c.net>0) payable+=c.net; else takeback+=Math.abs(c.net);
   });
   document.getElementById('s-gross').textContent=pkr(gross);
   document.getElementById('s-payable').textContent=pkr(payable);
@@ -1056,56 +876,39 @@ function renderStats(emps){
   document.getElementById('s-cash').textContent=pkr(payable);
 }
 
-// ── CASH BREAKDOWN ──
+// ══════════════════════════════════════════════
+//  CASH BREAKDOWN
+// ══════════════════════════════════════════════
 function renderCash(emps){
-  const grid = document.getElementById('cashGrid');
+  const grid=document.getElementById('cashGrid');
   grid.innerHTML='';
-  const pay=[], take=[];
-  emps.forEach(e=>{
-    const c=calcEmp(e);
-    if(c.net>0) pay.push({...e,net:c.net});
-    else if(c.net<0) take.push({...e,net:c.net});
-  });
-  pay.sort((a,b)=>b.net-a.net);
-  take.sort((a,b)=>a.net-b.net);
-
+  const pay=[],take=[];
+  emps.forEach(e=>{ const c=calcEmp(e); if(c.net>0) pay.push({...e,net:c.net}); else if(c.net<0) take.push({...e,net:c.net}); });
+  pay.sort((a,b)=>b.net-a.net); take.sort((a,b)=>a.net-b.net);
   if(pay.length){
-    const h=document.createElement('div');
-    h.className='cash-section-head g';
-    h.textContent='✓ Pay out';
-    grid.appendChild(h);
-    pay.forEach(p=>{
-      const d=document.createElement('div');
-      d.className='cash-item pay';
-      d.innerHTML=`<div class="cash-item-left"><div class="ci-name">${p.name}</div><div class="ci-desig">${p.desig}</div></div><div class="cash-item-amt">${pkr(p.net)}</div>`;
-      grid.appendChild(d);
-    });
+    const h=document.createElement('div'); h.className='cash-section-head g'; h.textContent='✓ Pay out'; grid.appendChild(h);
+    pay.forEach(p=>{ const d=document.createElement('div'); d.className='cash-item pay'; d.innerHTML=`<div class="cash-item-left"><div class="ci-name">${p.name}</div><div class="ci-desig">${p.desig}</div></div><div class="cash-item-amt">${pkr(p.net)}</div>`; grid.appendChild(d); });
   }
   if(take.length){
-    const h=document.createElement('div');
-    h.className='cash-section-head r';
-    h.textContent='⚠ Take back — owes you';
-    grid.appendChild(h);
-    take.forEach(p=>{
-      const d=document.createElement('div');
-      d.className='cash-item take';
-      d.innerHTML=`<div class="cash-item-left"><div class="ci-name">${p.name}</div><div class="ci-desig">${p.desig}</div></div><div class="cash-item-amt">${pkr(p.net)}</div>`;
-      grid.appendChild(d);
-    });
+    const h=document.createElement('div'); h.className='cash-section-head r'; h.textContent='⚠ Take back — owes you'; grid.appendChild(h);
+    take.forEach(p=>{ const d=document.createElement('div'); d.className='cash-item take'; d.innerHTML=`<div class="cash-item-left"><div class="ci-name">${p.name}</div><div class="ci-desig">${p.desig}</div></div><div class="cash-item-amt">${pkr(p.net)}</div>`; grid.appendChild(d); });
   }
 }
 
-// ── ROLE FILTER POPULATE ──
+// ══════════════════════════════════════════════
+//  ROLE FILTER
+// ══════════════════════════════════════════════
 function populateRoles(emps){
-  const sel=document.getElementById('roleFilter');
-  const cur=sel.value;
+  const sel=document.getElementById('roleFilter'); const cur=sel.value;
   const roles=[...new Set(emps.map(e=>e.desig).filter(Boolean))].sort();
   sel.innerHTML='<option value="">All roles</option>';
   roles.forEach(r=>{ const o=document.createElement('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
   sel.value=cur;
 }
 
-// ── EMPLOYEE LIST ──
+// ══════════════════════════════════════════════
+//  EMPLOYEE LIST
+// ══════════════════════════════════════════════
 function renderList(){
   const emps=getEmps();
   populateRoles(emps);
@@ -1118,47 +921,42 @@ function renderList(){
     if(status && e.status!==status) return false;
     return true;
   });
-
   const list=document.getElementById('empList');
   list.innerHTML='';
   if(!filtered.length){
     list.innerHTML=`<div class="empty-state"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>No employees match your filter</div>`;
     return;
   }
-
   filtered.forEach(e=>{
     const realIdx=emps.indexOf(e);
     const c=calcEmp(e);
     const isNeg=c.net<0;
+    const loanRemaining=getTotalLoanRemaining(e.id);
+    const hasLoan=loanRemaining>0;
     const tr=document.createElement('div');
-    tr.className='emp-row'+(isNeg?' negative-row':'')+(e.status==='Inactive'?' inactive-row':'')+(e.transferred?' transferred-row':'')+(selectedIds.has(e.id)?' selected':'');    tr.innerHTML=`
+    tr.className='emp-row'+(isNeg?' negative-row':'')+(hasLoan?' has-loan':'')+(selectedIds.has(e.id)?' selected':'');
+    tr.innerHTML=`
       <input type="checkbox" class="emp-check" ${selectedIds.has(e.id)?'checked':''} onclick="toggleSelect(event,${e.id})" ${bulkMode?'':'style="display:none"'}>
       <div class="emp-info" onclick="openDrawer(${realIdx})">
         <div class="emp-name">${e.name}</div>
         <div class="emp-desig">${e.desig||'—'}</div>
-                        ${e.transferred?`<div class="emp-note-tag" style="background:rgba(91,156,246,0.2);color:var(--blue)">⏳ PENDING - ${pkr(e.addMoney||0)}</div>`:''}
         ${e.note?`<div class="emp-note-tag">${e.note}</div>`:''}
-        ${e.addReason && !e.transferred?`<div class="emp-note-tag" style="background:rgba(62,207,122,0.15);color:var(--green)">${e.addReason}</div>`:''}
+        ${hasLoan?`<div class="emp-loan-tag">🏦 Loan: ${pkr(loanRemaining)}</div>`:''}
+        ${e.addReason?`<div class="emp-note-tag" style="background:rgba(62,207,122,0.15);color:var(--green)">${e.addReason}</div>`:''}
       </div>
       <div class="emp-cell" onclick="openDrawer(${realIdx})">${e.desig||'—'}</div>
-            <div class="emp-cell highlight" onclick="openDrawer(${realIdx})">${e.transferred?'—':pkr(e.monthly)}</div>
-      <div class="emp-cell" onclick="openDrawer(${realIdx})">${e.transferred?'—':e.days}</div>
-      <div class="emp-cell highlight" onclick="openDrawer(${realIdx})">${e.transferred?'—':pkr(c.gross)}</div>
-      <div class="emp-cell ${e.advance?'orange':''}" onclick="openDrawer(${realIdx})" style="color:${e.advance||e.fine?'var(--orange)':e.addMoney?'var(--green)':'var(--text3)'}">${e.addMoney?pkr(e.addMoney):pkr((e.advance||0)+(e.fine||0))}</div>      
-            <div class="emp-cell ${c.net>0?'green':c.net<<0?'red':'zero'}" onclick="openDrawer(${realIdx})">${e.transferred && c.net>0?'⏳ '+pkr(c.net):c.net>0?pkr(c.net):'('+pkr(c.net)+')'}</div>
+      <div class="emp-cell highlight" onclick="openDrawer(${realIdx})">${pkr(e.monthly)}</div>
+      <div class="emp-cell" onclick="openDrawer(${realIdx})">${e.days}</div>
+      <div class="emp-cell highlight" onclick="openDrawer(${realIdx})">${pkr(c.gross)}</div>
+      <div class="emp-cell" onclick="openDrawer(${realIdx})" style="color:${e.advance||e.fine?'var(--orange)':e.addMoney?'var(--green)':'var(--text3)'}">${e.addMoney?pkr(e.addMoney):pkr((e.advance||0)+(e.fine||0))}</div>
+      <div class="emp-cell ${c.net>0?'green':c.net<0?'red':'zero'}" onclick="openDrawer(${realIdx})">${c.net>=0?pkr(c.net):'('+pkr(c.net)+')'}</div>
       <div class="emp-actions">
         <button class="btn-icon" title="Edit" onclick="openDrawer(${realIdx})">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-                <button class="btn-icon" title="Transfer to Next Month" onclick="transferToNextMonth(${realIdx});event.stopPropagation();" style="color:var(--blue)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-        </button>
-                <button class="btn-icon" title="Remove Permanently" onclick="removePermanentlyFromMonth(${realIdx});event.stopPropagation();" style="color:var(--red)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        </button>
-        <button class="btn-icon" title="Salary Slip" onclick="quickBankLetter(${realIdx});event.stopPropagation();">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        </button>
+        ${hasLoan?`<button class="btn-icon" title="Loan Detail" onclick="openLoanDetailForEmp(${e.id});event.stopPropagation();" style="color:var(--purple)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </button>`:''}
         <button class="btn-icon" title="WhatsApp Slip" onclick="quickShare(${realIdx});event.stopPropagation();">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="color:var(--green)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </button>
@@ -1167,7 +965,9 @@ function renderList(){
   });
 }
 
-// ── DRAWER ──
+// ══════════════════════════════════════════════
+//  DRAWER
+// ══════════════════════════════════════════════
 function openDrawer(idx){
   drawerIdx=idx;
   const e=getEmps()[idx];
@@ -1180,10 +980,36 @@ function openDrawer(idx){
   document.getElementById('d-days').value=e.days;
   document.getElementById('d-advance').value=e.advance||0;
   document.getElementById('d-fine').value=e.fine||0;
-    document.getElementById('d-note').value=e.note||'';
+  document.getElementById('d-note').value=e.note||'';
   document.getElementById('d-addmoney').value=e.addMoney||0;
   document.getElementById('d-addreason').value=e.addReason||'';
-  document.getElementById('drawerDeleteBtn').onclick=()=>deleteEmployee(idx);
+  document.getElementById('drawerDeleteBtn').onclick=()=>deleteEmployeeWithPassword();
+  // Show loan info
+  const loans=getLoanForEmployee(e.id);
+  const loanDiv=document.getElementById('drawerLoanInfo');
+  if(loans.length>0){
+    const total=loans.reduce((s,l)=>s+l.remaining,0);
+    const monthlyDeduct=loans.reduce((s,l)=>s+(l.monthlyDeduct||0),0);
+    loanDiv.style.background='rgba(167,139,250,0.08)';
+    loanDiv.style.borderColor='rgba(167,139,250,0.3)';
+    loanDiv.innerHTML=loans.map(l=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="color:var(--purple);font-weight:700">Loan #${l.id}</span>
+        <span style="font-family:var(--mono);color:var(--red);font-weight:700">${pkr(l.remaining)} remaining</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text3)">
+        <span>Original: <strong style="color:var(--text2)">${pkr(l.amount)}</strong></span>
+        <span>Monthly deduct: <strong style="color:var(--orange)">${pkr(l.monthlyDeduct||0)}</strong></span>
+        <span>Paid back: <strong style="color:var(--green)">${pkr(l.amount - l.remaining)}</strong></span>
+        <span>Issued: <strong style="color:var(--text2)">${l.date||'—'}</strong></span>
+      </div>
+      ${l.remarks?`<div style="font-size:11px;color:var(--text3);margin-top:6px;font-style:italic">${l.remarks}</div>`:''}
+    `).join('<hr style="border-color:var(--border);margin:10px 0">');
+  } else {
+    loanDiv.style.background='var(--surface2)';
+    loanDiv.style.borderColor='var(--border)';
+    loanDiv.innerHTML='<span style="color:var(--text3)">No active loan for this employee.</span>';
+  }
   drawerCalc();
   document.getElementById('drawerOverlay').classList.add('open');
 }
@@ -1194,27 +1020,32 @@ function drawerCalc(){
   const advance=+document.getElementById('d-advance').value||0;
   const fine=+document.getElementById('d-fine').value||0;
   const addMoney=+document.getElementById('d-addmoney').value||0;
+  const addReason=document.getElementById('d-addreason').value||'';
+  const name=document.getElementById('d-name').value;
   const gross=Math.round((monthly/30)*days);
   const net=gross-advance-fine+addMoney;
-  const name=document.getElementById('d-name').value;
-
+  // Loan info
+  const empId=drawerIdx!==null?getEmps()[drawerIdx]?.id:null;
+  const loanRemaining=empId?getTotalLoanRemaining(empId):0;
+  const loans=empId?getLoanForEmployee(empId):[];
+  const monthlyLoanDeduct=loans.reduce((s,l)=>s+(l.monthlyDeduct||0),0);
   document.getElementById('calcBox').innerHTML=`
     <div class="calc-row"><span class="label">Monthly salary</span><span class="val b">${pkr(monthly)}</span></div>
     <div class="calc-row"><span class="label">Per day rate</span><span class="val">${pkr(monthly/30)}</span></div>
     <div class="calc-row"><span class="label">Days worked (${days})</span><span class="val b">${pkr(gross)}</span></div>
     <div class="calc-row"><span class="label">Advance + food</span><span class="val o">- ${pkr(advance)}</span></div>
     <div class="calc-row"><span class="label">Fine / uniform</span><span class="val o">- ${pkr(fine)}</span></div>
-    ${addMoney>0?`<div class="calc-row"><span class="label">Extra payment (${document.getElementById('d-addreason').value||'Bonus'})</span><span class="val g">+ ${pkr(addMoney)}</span></div>`:''}
-    <div class="calc-row divider"><span class="label">Net payable</span><span class="val ${net>0?'g':'r'}">${net>=0?pkr(net):'('+pkr(net)+') — OWES YOU'}</span></div>`;
+    ${addMoney>0?`<div class="calc-row"><span class="label">Extra (${addReason||'Bonus'})</span><span class="val g">+ ${pkr(addMoney)}</span></div>`:''}
+    <div class="calc-row divider"><span class="label">Net payable</span><span class="val ${net>=0?'g':'r'}">${net>=0?pkr(net):'('+pkr(net)+') OWES'}</span></div>
+    ${loanRemaining>0?`
+      <div class="calc-row" style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(167,139,250,0.3)"><span class="label" style="color:var(--purple)">Loan outstanding</span><span class="val p">${pkr(loanRemaining)}</span></div>
+      ${monthlyLoanDeduct>0?`<div class="calc-row"><span class="label" style="color:var(--purple)">Suggested monthly deduct</span><span class="val p">${pkr(monthlyLoanDeduct)}</span></div>`:''}
+    `:''}`;
   const month=currentMonth.replace('-',' ');
-    const addReason = document.getElementById('d-addreason').value||'';
   document.getElementById('slipBox').textContent=
-    `OvenX Payroll — ${month}\n`+
-    `Employee: ${name||'—'}\n`+
-    `Monthly: ${pkr(monthly)} | Days: ${days}\n`+
-    `Gross: ${pkr(gross)}\n`+
-    `Advance+Food: ${pkr(advance)} | Fine: ${pkr(fine)}\n`+
+    `OvenX Payroll — ${month}\nEmployee: ${name||'—'}\nMonthly: ${pkr(monthly)} | Days: ${days}\nGross: ${pkr(gross)}\nAdvance+Food: ${pkr(advance)} | Fine: ${pkr(fine)}\n`+
     (addMoney>0?`Extra (${addReason||'Bonus'}): +${pkr(addMoney)}\n`:``)+
+    (loanRemaining>0?`Loan Remaining: ${pkr(loanRemaining)}\n`:``)+
     `━━━━━━━━━━━━━━━━━━━\n`+
     (net>=0?`NET PAY: ${pkr(net)}`:`BALANCE DUE: ${pkr(Math.abs(net))}`);
 }
@@ -1224,455 +1055,370 @@ function closeDrawerForce(){ document.getElementById('drawerOverlay').classList.
 
 function saveDrawer(){
   if(drawerIdx===null) return;
-  
-  const newSalary = +document.getElementById('d-salary').value||0;
-  const oldSalary = getEmps()[drawerIdx].monthly;
-  
-  // If salary changed, require password
-  if(newSalary !== oldSalary && newSalary > 0){
-    pendingSave = {
-      drawerIdx: drawerIdx,
-      newData: {
-        name: document.getElementById('d-name').value,
-        desig: document.getElementById('d-desig').value,
-        status: document.getElementById('d-status').value,
-        monthly: newSalary,
-        days: +document.getElementById('d-days').value||0,
-        advance: +document.getElementById('d-advance').value||0,
-        fine: +document.getElementById('d-fine').value||0,
-        note: document.getElementById('d-note').value,
-        addMoney: +document.getElementById('d-addmoney').value||0,
-        addReason: document.getElementById('d-addreason').value||''
-      }
-    };
-    openPasswordModal();
+  const newSalary=+document.getElementById('d-salary').value||0;
+  const oldSalary=getEmps()[drawerIdx].monthly;
+  const newData={
+    name:document.getElementById('d-name').value,
+    desig:document.getElementById('d-desig').value,
+    status:document.getElementById('d-status').value,
+    monthly:newSalary,
+    days:+document.getElementById('d-days').value||0,
+    advance:+document.getElementById('d-advance').value||0,
+    fine:+document.getElementById('d-fine').value||0,
+    note:document.getElementById('d-note').value,
+    addMoney:+document.getElementById('d-addmoney').value||0,
+    addReason:document.getElementById('d-addreason').value||''
+  };
+  if(newSalary!==oldSalary && newSalary>0){
+    pendingSave={drawerIdx,newData};
+    openPasswordModal('Save with salary change');
     return;
   }
-  
-  // Normal save (no salary change)
-  doSave({
-    drawerIdx: drawerIdx,
-    newData: {
-      name: document.getElementById('d-name').value,
-      desig: document.getElementById('d-desig').value,
-      status: document.getElementById('d-status').value,
-      monthly: newSalary,
-      days: +document.getElementById('d-days').value||0,
-      advance: +document.getElementById('d-advance').value||0,
-      fine: +document.getElementById('d-fine').value||0,
-      note: document.getElementById('d-note').value,
-      addMoney: +document.getElementById('d-addmoney').value||0,
-      addReason: document.getElementById('d-addreason').value||''
-    }
-  });
+  doSave({drawerIdx,newData});
 }
 
-function doSave(saveData){
+function doSave(sd){
   mutateEmps(emps=>{
-    emps[saveData.drawerIdx].name = saveData.newData.name;
-    emps[saveData.drawerIdx].desig = saveData.newData.desig;
-    emps[saveData.drawerIdx].status = saveData.newData.status;
-    emps[saveData.drawerIdx].monthly = saveData.newData.monthly;
-    emps[saveData.drawerIdx].days = saveData.newData.days;
-    emps[saveData.drawerIdx].advance = saveData.newData.advance;
-    emps[saveData.drawerIdx].fine = saveData.newData.fine;
-    emps[saveData.drawerIdx].note = saveData.newData.note;
-    emps[saveData.drawerIdx].addMoney = saveData.newData.addMoney;
-    emps[saveData.drawerIdx].addReason = saveData.newData.addReason;
+    Object.assign(emps[sd.drawerIdx], sd.newData);
   });
-  
-  // If salary was changed with password, update DEFAULT permanently
-  if(pendingSave && pendingSave.newData.monthly !== getEmps()[saveData.drawerIdx].monthly){
-    updateDefaultEmployee(saveData.drawerIdx, saveData.newData.monthly);
-  }
-  
-  pendingSave = null;
-  closeDrawerForce();
-  renderAll();
-  toast('Saved','green');
+  pendingSave=null; closeDrawerForce(); renderAll(); toast('Saved','green');
 }
 
-function updateDefaultEmployee(idx, newSalary){
-  const emps = getEmps();
-  const emp = emps[idx];
-  // Find in DEFAULT_EMPLOYEES and update
-  const defIdx = DEFAULT_EMPLOYEES.findIndex(e => e.id === emp.id);
-  if(defIdx >= 0){
-    DEFAULT_EMPLOYEES[defIdx].monthly = newSalary;
-    DEFAULT_EMPLOYEES[defIdx].name = emp.name;
-    DEFAULT_EMPLOYEES[defIdx].desig = emp.desig;
-    // Save updated defaults to localStorage so they persist across sessions
-    localStorage.setItem('ovenx_defaults', JSON.stringify(DEFAULT_EMPLOYEES));
-    toast('Default salary updated permanently', 'green');
-  }
-}
-
-// Load saved defaults on startup
-const savedDefaults = localStorage.getItem('ovenx_defaults');
-if(savedDefaults){
-  const parsed = JSON.parse(savedDefaults);
-  // Merge with current defaults to keep any new fields
-  parsed.forEach((e, i) => {
-    if(DEFAULT_EMPLOYEES[i]) DEFAULT_EMPLOYEES[i] = {...DEFAULT_EMPLOYEES[i], ...e};
-  });
-}
-
-let pendingSave = null;
-const ADMIN_PASSWORD = '7530';
-
-function openPasswordModal(){
+// ══════════════════════════════════════════════
+//  PASSWORD MODAL
+// ══════════════════════════════════════════════
+function openPasswordModal(title='Admin Override'){
+  document.getElementById('pwModalTitle').textContent=title;
   document.getElementById('passwordModal').classList.add('open');
-  document.getElementById('adminPassword').value = '';
-  document.getElementById('passwordError').style.display = 'none';
-  setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+  document.getElementById('adminPassword').value='';
+  document.getElementById('passwordError').style.display='none';
+  setTimeout(()=>document.getElementById('adminPassword').focus(),100);
 }
-
-function closePasswordModal(){
-  document.getElementById('passwordModal').classList.remove('open');
-  pendingSave = null;
-}
+function closePasswordModal(){ document.getElementById('passwordModal').classList.remove('open'); pendingSave=null; pendingDelete=null; }
 
 function confirmPassword(){
-  const input = document.getElementById('adminPassword').value;
-  if(input === ADMIN_PASSWORD){
-    document.getElementById('passwordError').style.display = 'none';
-    closePasswordModal();
+  const input=document.getElementById('adminPassword').value;
+  if(input===ADMIN_PASSWORD){
+    document.getElementById('passwordModal').classList.remove('open');
     if(pendingSave) doSave(pendingSave);
+    else if(pendingDelete){ deleteEmployee(pendingDelete.idx); pendingDelete=null; }
   } else {
-    document.getElementById('passwordError').style.display = 'block';
-    document.getElementById('adminPassword').value = '';
+    document.getElementById('passwordError').style.display='block';
+    document.getElementById('adminPassword').value='';
     document.getElementById('adminPassword').focus();
   }
 }
-
-// Close modal on outside click
-document.getElementById('passwordModal').addEventListener('click', e => {
-  if(e.target === document.getElementById('passwordModal')) closePasswordModal();
-});
+document.getElementById('passwordModal').addEventListener('click',e=>{if(e.target===document.getElementById('passwordModal'))closePasswordModal();});
 
 function deleteEmployee(idx){
   mutateEmps(emps=>emps.splice(idx,1));
-  closeDrawerForce();
-  renderAll();
-  toast('Employee removed','orange');
+  closeDrawerForce(); renderAll(); toast('Employee removed','orange');
 }
-
 function deleteEmployeeWithPassword(){
-  if(drawerIdx===null) return;
-  const emp = getEmps()[drawerIdx];
-  pendingDelete = { idx: drawerIdx, name: emp.name };
-  openDeletePasswordModal();
+  if(drawerIdx===null)return;
+  const emp=getEmps()[drawerIdx];
+  pendingDelete={idx:drawerIdx,name:emp.name};
+  openPasswordModal('Confirm Remove — '+emp.name);
 }
 
-function transferCurrentEmployee(){
-  if(drawerIdx === null) return;
-  transferToNextMonth(drawerIdx);
-  closeDrawerForce();
+// ══════════════════════════════════════════════
+//  LOAN SYSTEM
+// ══════════════════════════════════════════════
+let loanIdCounter = 1;
+
+function initLoanIdCounter(){
+  const loans=loadLoans();
+  if(loans.length>0) loanIdCounter=Math.max(...loans.map(l=>l.id||0))+1;
 }
 
-let pendingDelete = null;
-
-function openDeletePasswordModal(){
-  document.getElementById('passwordModal').classList.add('open');
-  document.getElementById('adminPassword').value = '';
-  document.getElementById('passwordError').style.display = 'none';
-  // Change modal title temporarily
-  document.querySelector('#passwordModal h2').textContent = 'Confirm Removal — ' + (pendingDelete ? pendingDelete.name : '');
-  setTimeout(() => document.getElementById('adminPassword').focus(), 100);
-}
-
-// Override confirmPassword to handle both save and delete
-function confirmPassword(){
-  const input = document.getElementById('adminPassword').value;
-  if(input === ADMIN_PASSWORD){
-    document.getElementById('passwordError').style.display = 'none';
-    document.getElementById('passwordModal').classList.remove('open');
-    
-    if(pendingSave){
-      doSave(pendingSave);
-      pendingSave = null;
-    } else if(pendingDelete){
-      deleteEmployee(pendingDelete.idx);
-      pendingDelete = null;
-    }
-    
-    // Reset title
-    document.querySelector('#passwordModal h2').textContent = 'Admin Override';
-  } else {
-    document.getElementById('passwordError').style.display = 'block';
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('adminPassword').focus();
-  }
-}
-
-function shareWhatsApp(){
-  const msg=document.getElementById('slipBox').textContent;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
-function quickShare(idx){
-  const e=getEmps()[idx];
-  const c=calcEmp(e);
-  const month=currentMonth.replace('-',' ');
-  let msg=`OvenX Payroll — ${month}\nEmployee: ${e.name}\nMonthly: ${pkr(e.monthly)} | Days: ${e.days}\nGross: ${pkr(c.gross)}\nAdvance+Food: ${pkr(e.advance||0)} | Fine: ${pkr(e.fine||0)}\n`;
-  if(e.addMoney) msg+=`Extra (${e.addReason||'Bonus'}): +${pkr(e.addMoney)}\n`;
-  msg+=`━━━━━━━━━━━━━━━━━━━\n${c.net>=0?'NET PAY: '+pkr(c.net):'BALANCE DUE: '+pkr(Math.abs(c.net))}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
-function copySlip(){
-  navigator.clipboard.writeText(document.getElementById('slipBox').textContent);
-  toast('Slip copied!','green');
-}
-
-// ── BANK ACCOUNT OPENING LETTER ──
-function formatDate(dateStr) {
-  if (!dateStr) return new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
-}
-
-function formatJoiningDate(dateStr) {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
-}
-
-function generateBankLetterHTML(emp) {
-  const today = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'});
-  const joining = formatJoiningDate(emp.joining);
-  const empType = emp.type || 'Permanent';
-
-  return `
-<div class="bank-letter" id="printableLetter">
-  <div class="bank-letter-header">
-    <div class="bank-letter-logo">
-            <div class="bank-letter-logo-mark"><img src="logo-ovenx.png" alt="OvenX Logo"></div>
-      <div>
-        <div class="bank-letter-logo-text">${COMPANY.name}</div>
-        <div class="bank-letter-logo-sub">${COMPANY.type}</div>
-      </div>
-    </div>
-    <div class="bank-letter-date">
-      <strong>Date: ${today}</strong>
-      ${COMPANY.address}<br>
-      Phone: ${COMPANY.phone}
-    </div>
-  </div>
-
-  <div class="bank-letter-subject">Subject: Employment Verification Letter</div>
-
-  <div class="bank-letter-salutation">To Whom It May Concern,</div>
-
-  <div class="bank-letter-body">
-    This letter serves as official confirmation of employment for the individual mentioned below, who is currently working at <strong>${COMPANY.name}</strong>. This letter is issued at the request of the employee for the purpose of opening a bank account (salary/personal) with your esteemed financial institution.
-  </div>
-
-  <div class="bank-letter-section-title">Employment Details</div>
-  <table class="bank-letter-table">
-    <tr><td>Employee Name</td><td><strong>${emp.name}</strong></td></tr>
-    <tr><td>Designation</td><td>${emp.desig}</td></tr>
-    <tr><td>Date of Joining</td><td>${joining}</td></tr>
-    <tr><td>Monthly Salary</td><td><strong>PKR ${emp.monthly.toLocaleString('en-PK')}/-</strong></td></tr>
-    <tr><td>Employment Status</td><td>${empType}</td></tr>
-    <tr><td>Current Status</td><td>${emp.status}</td></tr>
-  </table>
-
-  <div class="bank-letter-section-title">Restaurant Details</div>
-  <table class="bank-letter-table">
-    <tr><td>Business Name</td><td>${COMPANY.businessName}</td></tr>
-    <tr><td>Address</td><td>${COMPANY.address}</td></tr>
-    <tr><td>Business Type</td><td>${COMPANY.type}</td></tr>
-    <tr><td>Contact</td><td>${COMPANY.phone} | ${COMPANY.website}</td></tr>
-  </table>
-
-  <div class="bank-letter-body" style="margin-top:20px">
-    We confirm that the employment details provided above are accurate as per our records. We kindly request you to facilitate the account opening process and provide all necessary banking services to our employee. The salary will be credited to the newly opened account on a monthly basis.
-  </div>
-
-  <div class="bank-letter-body">
-    Should you require any further verification or documentation, please feel free to contact us at <strong>${COMPANY.phone}</strong> or visit our restaurant at the address mentioned above.
-  </div>
-
-  <div class="bank-letter-body" style="margin-top:20px">
-    Thank you for your cooperation and professional assistance in this matter.
-  </div>
-
-  <div class="bank-letter-footer">
-    <div style="font-size:13px;margin-bottom:30px">Yours sincerely,</div>
-    <div class="bank-letter-stamp-area">
-      <div class="bank-letter-stamp-box">
-        Official Stamp<br>&<br>Company Seal
-      </div>
-      <div class="bank-letter-signature">
-        <div class="bank-letter-signature-line"></div>
-        <div class="bank-letter-signature-name">${COMPANY.managerName}</div>
-        <div class="bank-letter-signature-title">${COMPANY.managerTitle}<br>${COMPANY.name}</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="bank-letter-contact">
-    <strong>${COMPANY.name}</strong> — ${COMPANY.address} — Phone: ${COMPANY.phone} — ${COMPANY.website}
-  </div>
-</div>`;
-}
-
-function openBankLetterModal() {
-  if (drawerIdx === null) return;
-  const emp = getEmps()[drawerIdx];
-  document.getElementById('bankLetterContent').innerHTML = generateBankLetterHTML(emp);
-  document.getElementById('bankLetterModal').classList.add('open');
-}
-
-function quickBankLetter(idx) {
-  const emp = getEmps()[idx];
-  document.getElementById('bankLetterContent').innerHTML = generateBankLetterHTML(emp);
-  document.getElementById('bankLetterModal').classList.add('open');
-}
-
-function closeBankLetterModal(e) {
-  if (e.target === document.getElementById('bankLetterModal')) closeBankLetterModalForce();
-}
-function closeBankLetterModalForce() {
-  document.getElementById('bankLetterModal').classList.remove('open');
-}
-function printBankLetter() {
-  window.print();
-}
-
-// ── TRANSFER TO NEXT MONTH ──
-function transferToNextMonth(idx){
-  const emps = getEmps();
-  const emp = emps[idx];
-  if(!emp) return;
-  
-  const c = calcEmp(emp);
-  const netPayable = c.net > 0 ? c.net : 0;
-  
-  if(!confirm(`Transfer ${emp.name} to next month?\n\nCurrent net: ${pkr(c.net)}\nAmount to carry: ${pkr(netPayable)}\n\nThis will:\n• Remove employee from ${currentMonth}\n• Add ONLY the pending amount (${pkr(netPayable)}) to next month\n• Employee will be auto-removed after next month`)) return;
-  
-  // Calculate next month key
-  const [mn, yr] = currentMonth.split('-');
-  const mi = MONTHS.indexOf(mn);
-  const nextMi = mi === 11 ? 0 : mi + 1;
-  const nextYr = mi === 11 ? parseInt(yr) + 1 : parseInt(yr);
-  const nextMonth = MONTHS[nextMi] + '-' + nextYr;
-  
-  // Remove from current month
-  mutateEmps(emps => emps.splice(idx, 1));
-  
-  // Add to next month with ZERO salary, only the pending amount as addMoney
-  let nextEmps = loadEmployees(nextMonth);
-  
-  // Check if employee already exists in next month
-  const existingIdx = nextEmps.findIndex(e => e.id === emp.id);
-  
-  const transferredEmp = {
-    ...emp,
-    monthly: 0,           // NO salary for next month - he left
-    days: 0,              // No days worked
-    advance: 0,
-    fine: 0,
-    addMoney: netPayable, // Only the pending amount
-    addReason: `Pending salary from ${currentMonth}`,
-    status: 'Inactive',   // Mark as inactive since he left
-    note: `LEFT - Pending payment ${pkr(netPayable)} from ${currentMonth}. Auto-remove after this month.`,
-    transferred: true,    // Flag to auto-remove in future
-    transferSource: currentMonth
+function addLoan(){
+  const empId=+document.getElementById('ln-employee').value;
+  const amount=+document.getElementById('ln-amount').value||0;
+  const date=document.getElementById('ln-date').value||new Date().toISOString().split('T')[0];
+  const monthlyDeduct=+document.getElementById('ln-monthly-deduct').value||0;
+  const remarks=document.getElementById('ln-remarks').value.trim();
+  if(!empId||!amount){ toast('Select employee and enter amount','orange'); return; }
+  const emps=getEmps();
+  const emp=emps.find(e=>e.id===empId);
+  if(!emp){ toast('Employee not found','orange'); return; }
+  const loans=loadLoans();
+  const newLoan={
+    id:loanIdCounter++,
+    empId, empName:emp.name, empDesig:emp.desig,
+    amount, remaining:amount, date, monthlyDeduct, remarks,
+    status:'active',
+    repayments:[], // [{date, amount, month, source}]
+    issuedMonth:currentMonth
   };
-  
-  if(existingIdx >= 0){
-    // Update existing
-    nextEmps[existingIdx] = transferredEmp;
-  } else {
-    // Add new
-    nextEmps.push(transferredEmp);
-  }
-  
-  saveEmployees(nextMonth, nextEmps);
-  
-  renderAll();
-  toast(`${emp.name} transferred to ${nextMonth} with ${pkr(netPayable)} pending`, 'blue');
+  loans.push(newLoan);
+  saveLoans(loans);
+  // Reset form
+  document.getElementById('ln-amount').value='';
+  document.getElementById('ln-monthly-deduct').value='';
+  document.getElementById('ln-remarks').value='';
+  renderLoanTab();
+  renderList();
+  toast(`Loan issued: ${pkr(amount)} for ${emp.name}`,'purple');
 }
 
-function removePermanentlyFromMonth(idx){
-  const emps = getEmps();
-  const emp = emps[idx];
-  if(!emp) return;
-  
-  if(!confirm(`PERMANENTLY remove ${emp.name} from ${currentMonth} and all future months?\n\nThis cannot be undone. The employee will be removed from:\n• ${currentMonth}\n• All future months\n\nThey will remain in past months.`)) return;
-  
-  // Remove from current month
-  mutateEmps(emps => emps.splice(idx, 1));
-  
-  // Remove from all future months
-  const [mn, yr] = currentMonth.split('-');
-  const startMi = MONTHS.indexOf(mn);
-  const startYr = parseInt(yr);
-  
-  YEARS.forEach(y => {
-    if(y < startYr) return;
-    MONTHS.forEach((m, i) => {
-      if(y === startYr && i < startMi) return;
-      const monthKey = m + '-' + y;
-      const monthEmps = loadEmployees(monthKey);
-      const filtered = monthEmps.filter(e => e.id !== emp.id);
-      if(filtered.length !== monthEmps.length){
-        saveEmployees(monthKey, filtered);
-      }
-    });
+function recordLoanPayment(loanId, amount, source='manual', month=null){
+  const loans=loadLoans();
+  const loan=loans.find(l=>l.id===loanId);
+  if(!loan) return;
+  const pay=Math.min(amount, loan.remaining);
+  loan.remaining=Math.max(0, loan.remaining-pay);
+  loan.repayments.push({
+    date:new Date().toISOString().split('T')[0],
+    amount:pay,
+    month:month||currentMonth,
+    source
   });
-  
-  // Also mark in defaults so new months don't include them
-  const defIdx = DEFAULT_EMPLOYEES.findIndex(e => e.id === emp.id);
-  if(defIdx >= 0){
-    DEFAULT_EMPLOYEES[defIdx].status = 'Inactive';
-    DEFAULT_EMPLOYEES[defIdx].note = (DEFAULT_EMPLOYEES[defIdx].note ? DEFAULT_EMPLOYEES[defIdx].note + ' | ' : '') + `Left ${currentMonth}`;
-    localStorage.setItem('ovenx_defaults', JSON.stringify(DEFAULT_EMPLOYEES));
+  if(loan.remaining===0){
+    loan.status='cleared';
+    loan.clearedDate=new Date().toISOString().split('T')[0];
+    toast(`Loan fully cleared for ${loan.empName}!`,'green');
+  } else {
+    toast(`Recorded ${pkr(pay)} payment. Remaining: ${pkr(loan.remaining)}`,'green');
   }
-  
-  renderAll();
-  toast(`${emp.name} removed permanently from ${currentMonth} onwards`, 'red');
+  saveLoans(loans);
+  renderLoanTab();
+  renderList();
 }
 
-// ── BULK ADVANCE ──
+function deleteLoan(loanId){
+  if(!confirm('Delete this loan record permanently?')) return;
+  const loans=loadLoans().filter(l=>l.id!==loanId);
+  saveLoans(loans);
+  renderLoanTab(); renderList();
+  toast('Loan deleted','orange');
+}
+
+// Auto-deduct monthly installments from salary advances
+function autoDeductLoans(){
+  const loans=loadLoans().filter(l=>l.status==='active'&&l.monthlyDeduct>0);
+  if(!loans.length){ toast('No active loans with monthly deductions','orange'); return; }
+  // Check if already deducted this month
+  const alreadyDone=loans.filter(l=>l.repayments.some(r=>r.month===currentMonth&&r.source==='auto'));
+  if(alreadyDone.length>0&&!confirm(`${alreadyDone.length} loan(s) already deducted for ${currentMonth}. Re-apply?`)) return;
+  let count=0;
+  loans.forEach(loan=>{
+    // Skip if already done this month
+    if(loan.repayments.some(r=>r.month===currentMonth&&r.source==='auto')) return;
+    const deduct=Math.min(loan.monthlyDeduct, loan.remaining);
+    // Add to employee's advance this month
+    mutateEmps(emps=>{
+      const emp=emps.find(e=>e.id===loan.empId);
+      if(emp){ emp.advance=(emp.advance||0)+deduct; emp.note=(emp.note?emp.note+' | ':'')+`Loan deduct ${pkr(deduct)}`; }
+    });
+    recordLoanPayment(loan.id, deduct, 'auto', currentMonth);
+    count++;
+  });
+  renderAll();
+  toast(`Auto-deducted ${count} loan installment(s) for ${currentMonth}`,'purple');
+}
+
+function renderLoanTab(){
+  populateLoanEmployeeSelect();
+  renderLoanStats();
+  renderLoanTable();
+}
+
+function populateLoanEmployeeSelect(){
+  const sel=document.getElementById('ln-employee');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Select employee...</option>';
+  getEmps().forEach(e=>{
+    const o=document.createElement('option');
+    o.value=e.id;
+    o.textContent=e.name+' ('+e.desig+')';
+    sel.appendChild(o);
+  });
+  sel.value=cur;
+}
+
+function renderLoanStats(){
+  const loans=loadLoans();
+  const active=loans.filter(l=>l.status==='active');
+  const total=loans.reduce((s,l)=>s+l.amount,0);
+  const outstanding=active.reduce((s,l)=>s+l.remaining,0);
+  const recovered=total-outstanding;
+  document.getElementById('ls-total').textContent=pkr(total);
+  document.getElementById('ls-recovered').textContent=pkr(recovered);
+  document.getElementById('ls-outstanding').textContent=pkr(outstanding);
+  document.getElementById('ls-count').textContent=active.length;
+}
+
+function renderLoanTable(){
+  const filter=document.getElementById('loanStatusFilter').value;
+  const loans=loadLoans();
+  const active=loans.filter(l=>l.status==='active');
+  const cleared=loans.filter(l=>l.status==='cleared');
+  const tbody=document.getElementById('loanTableBody');
+  tbody.innerHTML='';
+  if(active.length===0){
+    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text3)">No active loans. Use the form above to issue a loan.</td></tr>`;
+  } else {
+    active.forEach(loan=>{
+      const paid=loan.amount-loan.remaining;
+      const pct=loan.amount>0?Math.round((paid/loan.amount)*100):0;
+      // Calculate advances till date (sum of all repayments)
+      const advTillDate=loan.repayments.reduce((s,r)=>s+r.amount,0);
+      // Salary remaining = monthly salary minus advance this month
+      const emps=getEmps();
+      const emp=emps.find(e=>e.id===loan.empId);
+      const salaryNet=emp?calcEmp(emp).net:0;
+      // Boss will pay = net salary after deductions is still positive
+      const bossPay=salaryNet>0;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>
+          <div class="loan-emp-name">${loan.empName}</div>
+          <div class="loan-emp-desig">${loan.empDesig}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Issued: ${loan.date||'—'} | #${loan.id}</div>
+        </td>
+        <td class="num loan-amt-total">${pkr(loan.amount)}</td>
+        <td class="num" style="color:var(--orange)">${pkr(advTillDate)}</td>
+        <td class="num" style="color:${salaryNet>0?'var(--green)':salaryNet<0?'var(--red)':'var(--text3)'}">${emp?pkr(salaryNet):'—'}</td>
+        <td class="num loan-amt-paid">${pkr(paid)}</td>
+        <td class="num loan-amt-remaining">${pkr(loan.remaining)}</td>
+        <td>
+          <div class="loan-progress-wrap">
+            <div class="loan-progress"><div class="loan-progress-bar" style="width:${pct}%"></div></div>
+            <span class="loan-pct">${pct}%</span>
+          </div>
+          ${loan.monthlyDeduct?`<div style="font-size:10px;color:var(--text3);margin-top:4px">-${pkr(loan.monthlyDeduct)}/mo</div>`:''}
+        </td>
+        <td style="text-align:center"><span class="loan-boss-badge ${bossPay?'loan-boss-yes':'loan-boss-no'}">${bossPay?'Yes':'No'}</span></td>
+        <td><div class="loan-remarks">${loan.remarks||'—'}</div></td>
+        <td>
+          <div class="loan-actions">
+            <button class="btn btn-green btn-sm" onclick="openLoanDetailModal(${loan.id})">Pay</button>
+            <button class="btn btn-ghost btn-sm" onclick="openLoanDetailModal(${loan.id})">Detail</button>
+            <button class="btn btn-red btn-sm" onclick="deleteLoan(${loan.id})">×</button>
+          </div>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  // Cleared loans
+  const clearedBody=document.getElementById('clearedLoanBody');
+  clearedBody.innerHTML='';
+  document.getElementById('clearedToggle').textContent=`${cleared.length>0?(document.getElementById('clearedLoansSection').style.display==='none'?'Show':'Hide'):''} Cleared Loans (${cleared.length})`;
+  cleared.forEach(loan=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="loan-emp-name" style="opacity:0.6">${loan.empName}</div><div class="loan-emp-desig">${loan.empDesig}</div></td>
+      <td class="num" style="opacity:0.6">${pkr(loan.amount)}</td>
+      <td class="num" style="color:var(--green)">${pkr(loan.amount)}</td>
+      <td style="color:var(--text3);font-size:12px">${loan.clearedDate||'—'}</td>
+      <td><div class="loan-remarks" style="opacity:0.6">${loan.remarks||'—'}</div></td>`;
+    clearedBody.appendChild(tr);
+  });
+}
+
+function toggleCleared(){
+  const sec=document.getElementById('clearedLoansSection');
+  sec.style.display=sec.style.display==='none'?'block':'none';
+  renderLoanTable();
+}
+
+// Loan Detail Modal
+function openLoanDetailModal(loanId){
+  const loans=loadLoans();
+  const loan=loans.find(l=>l.id===loanId);
+  if(!loan) return;
+  activeLoanId=loanId;
+  document.getElementById('lm-title').textContent=loan.empName+' — Loan #'+loan.id;
+  document.getElementById('lm-sub').textContent=loan.empDesig+' | Issued: '+loan.date+' | Remarks: '+(loan.remarks||'—');
+  const paid=loan.amount-loan.remaining;
+  const pct=loan.amount>0?Math.round((paid/loan.amount)*100):0;
+  document.getElementById('loanModalBody').innerHTML=`
+    <div style="padding:20px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Total Loan</div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--purple)">${pkr(loan.amount)}</div>
+        </div>
+        <div style="background:var(--green-bg);border:1px solid rgba(62,207,122,0.2);border-radius:var(--r);padding:14px;text-align:center">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Paid Back</div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--green)">${pkr(paid)}</div>
+        </div>
+        <div style="background:var(--red-bg);border:1px solid rgba(242,107,91,0.2);border-radius:var(--r);padding:14px;text-align:center">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Remaining</div>
+          <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)">${pkr(loan.remaining)}</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--r);padding:10px 12px;margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px"><span>Repayment Progress</span><span style="font-family:var(--mono)">${pct}% cleared</span></div>
+        <div style="height:8px;background:var(--surface3);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--green);border-radius:4px;transition:width .3s"></div></div>
+      </div>
+      <div class="quick-pay-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--green)">Payment Amount (Rs)</label>
+          <input class="form-input mono" type="number" id="lm-pay-amount" placeholder="e.g. 5000" value="${loan.monthlyDeduct||''}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--green)">Payment Date</label>
+          <input class="form-input mono" type="date" id="lm-pay-date" value="${new Date().toISOString().split('T')[0]}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-green" onclick="submitLoanPayment(${loanId})" style="width:100%;justify-content:center">Record Payment</button>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px">Repayment History</div>
+      ${loan.repayments.length===0?
+        '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">No payments recorded yet.</div>' :
+        `<div class="repay-panel">
+          ${loan.repayments.map((r,i)=>`
+            <div class="repay-row">
+              <div><span class="repay-date">${r.date}</span><span class="repay-source">[${r.source||'manual'} — ${r.month||''}]</span></div>
+              <div><span class="repay-amt">- ${pkr(r.amount)}</span></div>
+            </div>`).join('')}
+        </div>`
+      }
+    </div>`;
+  document.getElementById('loanDetailModal').classList.add('open');
+}
+
+function submitLoanPayment(loanId){
+  const amount=+document.getElementById('lm-pay-amount').value||0;
+  if(!amount){ toast('Enter a payment amount','orange'); return; }
+  recordLoanPayment(loanId, amount, 'manual', currentMonth);
+  closeLoanModalForce();
+}
+
+function openLoanDetailForEmp(empId){
+  const loans=getLoanForEmployee(empId);
+  if(loans.length===1) openLoanDetailModal(loans[0].id);
+  else if(loans.length>1) openLoanDetailModal(loans[0].id); // open first
+}
+
+function closeLoanModal(e){ if(e.target===document.getElementById('loanDetailModal')) closeLoanModalForce(); }
+function closeLoanModalForce(){ document.getElementById('loanDetailModal').classList.remove('open'); activeLoanId=null; }
+
+// ══════════════════════════════════════════════
+//  BULK ADVANCE
+// ══════════════════════════════════════════════
 function toggleBulkMode(){
-  bulkMode=!bulkMode;
-  selectedIds.clear();
-  const btn=document.getElementById('bulkToggle');
-  btn.classList.toggle('on',bulkMode);
+  bulkMode=!bulkMode; selectedIds.clear();
+  document.getElementById('bulkToggle').classList.toggle('on',bulkMode);
   document.getElementById('bulkBanner').classList.toggle('visible',bulkMode);
   renderList();
 }
-function toggleSelect(e,id){
-  e.stopPropagation();
-  if(selectedIds.has(id)) selectedIds.delete(id);
-  else selectedIds.add(id);
-  document.getElementById('bulkCount').textContent=selectedIds.size+' selected';
-  renderList();
-}
-function selectAll(){
-  getEmps().forEach(e=>selectedIds.add(e.id));
-  document.getElementById('bulkCount').textContent=selectedIds.size+' selected';
-  renderList();
-}
-function clearSelection(){
-  selectedIds.clear();
-  document.getElementById('bulkCount').textContent='0 selected';
-  renderList();
-}
+function toggleSelect(e,id){ e.stopPropagation(); selectedIds.has(id)?selectedIds.delete(id):selectedIds.add(id); document.getElementById('bulkCount').textContent=selectedIds.size+' selected'; renderList(); }
+function selectAll(){ getEmps().forEach(e=>selectedIds.add(e.id)); document.getElementById('bulkCount').textContent=selectedIds.size+' selected'; renderList(); }
+function clearSelection(){ selectedIds.clear(); document.getElementById('bulkCount').textContent='0 selected'; renderList(); }
 function applyBulkAdvance(){
   const amt=+document.getElementById('bulkAmount').value;
   if(!amt||!selectedIds.size){ alert('Enter an amount and select employees.'); return; }
   mutateEmps(emps=>emps.forEach(e=>{ if(selectedIds.has(e.id)) e.advance=(e.advance||0)+amt; }));
-  clearSelection();
-  toggleBulkMode();
-  renderAll();
-  toast('Bulk advance applied — Rs '+amt.toLocaleString('en-PK'),'green');
+  clearSelection(); toggleBulkMode(); renderAll(); toast('Bulk advance applied — Rs '+amt.toLocaleString('en-PK'),'green');
 }
 
-// ── ADD EMPLOYEE ──
+// ══════════════════════════════════════════════
+//  ADD EMPLOYEE
+// ══════════════════════════════════════════════
 function openAddModal(){ document.getElementById('addModal').classList.add('open'); }
 function closeAddModal(){ document.getElementById('addModal').classList.remove('open'); }
 function addEmployee(){
@@ -1681,66 +1427,64 @@ function addEmployee(){
   if(!name||!monthly){ alert('Name and salary required'); return; }
   mutateEmps(emps=>{
     const maxId=emps.reduce((m,e)=>Math.max(m,e.id),0);
-    emps.push({
-      id:maxId+1,
-      name,
-      desig:document.getElementById('m-desig').value.trim(),
-      monthly,
-      days:+document.getElementById('m-days').value||30,
-      advance:+document.getElementById('m-advance').value||0,
-      fine:+document.getElementById('m-fine').value||0,
-      status:document.getElementById('m-status').value,
-      note:document.getElementById('m-note').value.trim(),
-      joining:document.getElementById('m-joining').value,
-      type:document.getElementById('m-type').value,
-      addMoney:0,
-      addReason:''
-    });
+    emps.push({id:maxId+1, name, desig:document.getElementById('m-desig').value.trim(), monthly, days:+document.getElementById('m-days').value||30, advance:+document.getElementById('m-advance').value||0, fine:+document.getElementById('m-fine').value||0, status:document.getElementById('m-status').value, note:document.getElementById('m-note').value.trim(), joining:document.getElementById('m-joining').value, type:document.getElementById('m-type').value, addMoney:0, addReason:''});
   });
-  closeAddModal();
-  renderAll();
-  toast('Employee added','green');
+  closeAddModal(); renderAll(); toast('Employee added','green');
   ['m-name','m-desig','m-salary','m-note'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('m-advance').value='0';
-  document.getElementById('m-fine').value='0';
-  document.getElementById('m-days').value='30';
-  document.getElementById('m-joining').value='2024-01-01';
-  document.getElementById('m-type').value='Permanent';
+  document.getElementById('m-advance').value='0'; document.getElementById('m-fine').value='0'; document.getElementById('m-days').value='30';
 }
 
 function resetToDefault(){
-  if(!confirm('Reset to April 2026 default data? All changes for this month will be lost.')) return;
+  if(!confirm('Reset to April 2026 default data?')) return;
   saveEmployees('April-2026', JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)));
-  currentMonth='April-2026';
-  buildMonthTabs();
-  renderAll();
-  toast('Reset to April 2026 data','orange');
+  currentMonth='April-2026'; buildMonthTabs(); renderAll(); toast('Reset to April 2026','orange');
 }
 
-// ── ADD MODAL OUTSIDE CLICK ──
 document.getElementById('addModal').addEventListener('click',e=>{ if(e.target===document.getElementById('addModal')) closeAddModal(); });
-document.getElementById('passwordModal').addEventListener('click',e=>{ if(e.target===document.getElementById('passwordModal')) closePasswordModal(); });
 
-// ── TOAST ──
-function toast(msg, type='green'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast show '+type;
-  setTimeout(()=>t.className='toast',2600);
+// ══════════════════════════════════════════════
+//  SHARE / SLIP
+// ══════════════════════════════════════════════
+function shareWhatsApp(){ window.open('https://wa.me/?text='+encodeURIComponent(document.getElementById('slipBox').textContent),'_blank'); }
+function quickShare(idx){
+  const e=getEmps()[idx]; const c=calcEmp(e); const month=currentMonth.replace('-',' ');
+  const loanRemaining=getTotalLoanRemaining(e.id);
+  let msg=`OvenX Payroll — ${month}\nEmployee: ${e.name}\nMonthly: ${pkr(e.monthly)} | Days: ${e.days}\nGross: ${pkr(c.gross)}\nAdvance+Food: ${pkr(e.advance||0)} | Fine: ${pkr(e.fine||0)}\n`;
+  if(e.addMoney) msg+=`Extra (${e.addReason||'Bonus'}): +${pkr(e.addMoney)}\n`;
+  if(loanRemaining) msg+=`Loan Balance: ${pkr(loanRemaining)}\n`;
+  msg+=`━━━━━━━━━━━━━━━━━━━\n${c.net>=0?'NET PAY: '+pkr(c.net):'BALANCE DUE: '+pkr(Math.abs(c.net))}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
+function copySlip(){ navigator.clipboard.writeText(document.getElementById('slipBox').textContent); toast('Slip copied!','green'); }
 
-// ── RENDER ALL ──
+// ══════════════════════════════════════════════
+//  BANK LETTER
+// ══════════════════════════════════════════════
+function generateBankLetterHTML(emp){
+  const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  return `<div class="bank-letter"><div class="bank-letter-header"><div class="bank-letter-logo"><div><div class="bank-letter-logo-text">${COMPANY.name}</div><div class="bank-letter-logo-sub">${COMPANY.type}</div></div></div><div class="bank-letter-date"><strong>Date: ${today}</strong>${COMPANY.address}<br>Phone: ${COMPANY.phone}</div></div><div class="bank-letter-subject">Subject: Employment Verification Letter</div><div class="bank-letter-salutation">To Whom It May Concern,</div><div class="bank-letter-body">This letter serves as official confirmation of employment for the individual mentioned below, currently working at <strong>${COMPANY.name}</strong>.</div><div class="bank-letter-section-title">Employment Details</div><table class="bank-letter-table"><tr><td>Employee Name</td><td><strong>${emp.name}</strong></td></tr><tr><td>Designation</td><td>${emp.desig}</td></tr><tr><td>Monthly Salary</td><td><strong>PKR ${emp.monthly.toLocaleString('en-PK')}/-</strong></td></tr><tr><td>Employment Status</td><td>${emp.type||'Permanent'}</td></tr></table><div class="bank-letter-footer"><div style="font-size:13px;margin-bottom:30px">Yours sincerely,</div><div class="bank-letter-stamp-area"><div class="bank-letter-stamp-box">Official Stamp &amp; Company Seal</div><div class="bank-letter-signature"><div class="bank-letter-signature-line"></div><div class="bank-letter-signature-name">${COMPANY.managerName}</div><div class="bank-letter-signature-title">${COMPANY.managerTitle}</div></div></div></div><div class="bank-letter-contact">${COMPANY.name} — ${COMPANY.phone} — ${COMPANY.website}</div></div>`;
+}
+function openBankLetterModal(){ if(drawerIdx===null)return; document.getElementById('bankLetterContent').innerHTML=generateBankLetterHTML(getEmps()[drawerIdx]); document.getElementById('bankLetterModal').classList.add('open'); }
+function closeBankLetterModal(e){ if(e.target===document.getElementById('bankLetterModal')) closeBankLetterModalForce(); }
+function closeBankLetterModalForce(){ document.getElementById('bankLetterModal').classList.remove('open'); }
+
+// ══════════════════════════════════════════════
+//  RENDER ALL
+// ══════════════════════════════════════════════
 function renderAll(){
   const emps=getEmps();
   renderStats(emps);
   renderCash(emps);
-  renderPaybackTracker();
   renderList();
+  // If loan tab is visible, refresh it too
+  if(document.getElementById('tab-loans').classList.contains('active')) renderLoanTab();
 }
 
-// Set default date for payback form
-document.getElementById('pbDate').value = new Date().toISOString().split('T')[0];
-
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.getElementById('ln-date').value=new Date().toISOString().split('T')[0];
+initLoanIdCounter();
 buildMonthTabs();
 renderAll();
 </script>
