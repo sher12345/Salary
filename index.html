@@ -1298,34 +1298,36 @@ function doSave(sd){
   mutateEmps(emps=>{
     Object.assign(emps[sd.drawerIdx], sd.newData);
   });
-  
+
   // After saving current month, update next month's carriedDebt
   updateNextMonthCarriedDebt();
-  
+
   pendingSave=null; closeDrawerForce(); renderAll(); toast('Saved','green');
 }
 
 function updateNextMonthCarriedDebt(){
+  // Find next month
   const next = getNextMonth(currentMonth);
   if(!next) return;
-  
+
   const nextRaw = localStorage.getItem(storageKey(next));
-  if(!nextRaw) return;
-  
+  if(!nextRaw) return; // Next month doesn't exist yet, nothing to update
+
   const nextEmps = JSON.parse(nextRaw);
   const currentEmps = getEmps();
   let updated = false;
-  
+
   nextEmps.forEach(nextEmp => {
     const currEmp = currentEmps.find(e => e.id === nextEmp.id);
     if(!currEmp) return;
-    
+
+    // Recalculate what should be carried from current month
     const perDay = currEmp.monthly / 30;
     const gross = Math.round(perDay * currEmp.days);
     const totalDeductions = (currEmp.advance || 0) + (currEmp.fine || 0) + (currEmp.carriedDebt || 0);
     const net = gross - totalDeductions + (currEmp.addMoney || 0);
     const newCarriedDebt = net < 0 ? Math.abs(net) : 0;
-    
+
     if(newCarriedDebt !== (nextEmp.carriedDebt || 0)){
       nextEmp.carriedDebt = newCarriedDebt;
       nextEmp.note = newCarriedDebt > 0 
@@ -1334,7 +1336,7 @@ function updateNextMonthCarriedDebt(){
       updated = true;
     }
   });
-  
+
   if(updated){
     saveEmployees(next, nextEmps);
     toast(`Updated ${next} carried debt from ${currentMonth}`,'green');
