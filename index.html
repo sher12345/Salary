@@ -751,7 +751,21 @@ function loadEmployees(month){
   if(prev){
     const prevRaw = localStorage.getItem(storageKey(prev));
     if(prevRaw){
-      const copied = JSON.parse(prevRaw).map(e=>({...e,advance:0,fine:0,note:'',days:30,addMoney:0,addReason:''}));
+      const copied = JSON.parse(prevRaw).map(e => {
+        const perDay = e.monthly / 30;
+        const gross = Math.round(perDay * e.days);
+        const net = gross - (e.advance || 0) - (e.fine || 0) + (e.addMoney || 0);
+        const carriedDebt = net < 0 ? Math.abs(net) : 0;
+        return {
+          ...e,
+          advance: carriedDebt,
+          fine: 0,
+          note: carriedDebt > 0 ? `Debt carried forward: Rs ${carriedDebt.toLocaleString('en-PK')}` : '',
+          days: 30,
+          addMoney: 0,
+          addReason: ''
+        };
+      });
       saveEmployees(month, copied);
       return copied;
     }
