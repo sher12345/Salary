@@ -39,6 +39,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 /* ── HEADER ── */
 .header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100}
 .logo{display:flex;align-items:center;gap:10px}
+.logo img{height:40px;width:auto;border-radius:6px;object-fit:contain}
 .logo-mark{background:var(--accent);color:#000;font-weight:800;font-size:13px;padding:6px 10px;border-radius:6px;letter-spacing:0.5px}
 .logo-text{font-weight:700;font-size:16px;color:var(--text)}
 .logo-sub{font-size:11px;color:var(--text2);font-weight:400;margin-top:1px}
@@ -381,7 +382,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 <!-- HEADER -->
 <div class="header">
   <div class="logo">
-    <div class="logo-mark">OX</div>
+    <img src="YOUR_LOGO_BASE64_HERE" alt="OvenX" style="height:40px;width:auto;margin-right:10px;border-radius:6px;">
     <div>
       <div class="logo-text">OvenX Payroll</div>
       <div class="logo-sub">Multan — Salary &amp; Loan Management</div>
@@ -753,7 +754,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 <!-- ═══════════════════════════════════════════ -->
 <div class="print-only" id="printReport">
   <div class="print-report-header">
-    <div class="pr-logo">OVENX PAKISTAN</div>
+    <div class="pr-logo"><img src="YOUR_LOGO_BASE64_HERE" style="height:50px;width:auto;margin-bottom:8px;"><br>OVENX PAKISTAN</div>
     <div class="pr-sub">The OvenX — Restaurant & Food Service</div>
     <div class="pr-sub">Block A, Sheikh Abdul Hameed Rd, Gulgasht Colony, Multan</div>
     <div class="pr-sub">Phone: 0300-2450301 | theovenx.com</div>
@@ -1837,7 +1838,7 @@ function copySlip(){ navigator.clipboard.writeText(document.getElementById('slip
 // ══════════════════════════════════════════════
 function generateBankLetterHTML(emp){
   const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
-  return `<div class="bank-letter"><div class="bank-letter-header"><div class="bank-letter-logo"><div><div class="bank-letter-logo-text">${COMPANY.name}</div><div class="bank-letter-logo-sub">${COMPANY.type}</div></div></div><div class="bank-letter-date"><strong>Date: ${today}</strong>${COMPANY.address}<br>Phone: ${COMPANY.phone}</div></div><div class="bank-letter-subject">Subject: Employment Verification Letter</div><div class="bank-letter-salutation">To Whom It May Concern,</div><div class="bank-letter-body">This letter serves as official confirmation of employment for the individual mentioned below, currently working at <strong>${COMPANY.name}</strong>.</div><div class="bank-letter-section-title">Employment Details</div><table class="bank-letter-table"><tr><td>Employee Name</td><td><strong>${emp.name}</strong></td></tr><tr><td>Designation</td><td>${emp.desig}</td></tr><tr><td>Monthly Salary</td><td><strong>PKR ${emp.monthly.toLocaleString('en-PK')}/-</strong></td></tr><tr><td>Employment Status</td><td>${emp.type||'Permanent'}</td></tr></table><div class="bank-letter-footer"><div style="font-size:13px;margin-bottom:30px">Yours sincerely,</div><div class="bank-letter-stamp-area"><div class="bank-letter-stamp-box">Official Stamp &amp; Company Seal</div><div class="bank-letter-signature"><div class="bank-letter-signature-line"></div><div class="bank-letter-signature-name">${COMPANY.managerName}</div><div class="bank-letter-signature-title">${COMPANY.managerTitle}</div></div></div></div><div class="bank-letter-contact">${COMPANY.name} — ${COMPANY.phone} — ${COMPANY.website}</div></div>`;
+  return `<div class="bank-letter"><div class="bank-letter-header"><div class="bank-letter-logo"><img src="YOUR_LOGO_BASE64_HERE" style="height:45px;width:auto;margin-right:12px;vertical-align:middle;"><div style="display:inline-block;vertical-align:middle;"><div class="bank-letter-logo-text">${COMPANY.name}</div><div class="bank-letter-logo-sub">${COMPANY.type}</div></div></div><div class="bank-letter-date"><strong>Date: ${today}</strong>${COMPANY.address}<br>Phone: ${COMPANY.phone}</div></div><div class="bank-letter-subject">Subject: Employment Verification Letter</div><div class="bank-letter-salutation">To Whom It May Concern,</div><div class="bank-letter-body">This letter serves as official confirmation of employment for the individual mentioned below, currently working at <strong>${COMPANY.name}</strong>.</div><div class="bank-letter-section-title">Employment Details</div><table class="bank-letter-table"><tr><td>Employee Name</td><td><strong>${emp.name}</strong></td></tr><tr><td>Designation</td><td>${emp.desig}</td></tr><tr><td>Monthly Salary</td><td><strong>PKR ${emp.monthly.toLocaleString('en-PK')}/-</strong></td></tr><tr><td>Employment Status</td><td>${emp.type||'Permanent'}</td></tr></table><div class="bank-letter-footer"><div style="font-size:13px;margin-bottom:30px">Yours sincerely,</div><div class="bank-letter-stamp-area"><div class="bank-letter-stamp-box">Official Stamp &amp; Company Seal</div><div class="bank-letter-signature"><div class="bank-letter-signature-line"></div><div class="bank-letter-signature-name">${COMPANY.managerName}</div><div class="bank-letter-signature-title">${COMPANY.managerTitle}</div></div></div></div><div class="bank-letter-contact">${COMPANY.name} — ${COMPANY.phone} — ${COMPANY.website}</div></div>`;
 }
 function openBankLetterModal(){ if(drawerIdx===null)return; document.getElementById('bankLetterContent').innerHTML=generateBankLetterHTML(getEmps()[drawerIdx]); document.getElementById('bankLetterModal').classList.add('open'); }
 function closeBankLetterModal(e){ if(e.target===document.getElementById('bankLetterModal')) closeBankLetterModalForce(); }
