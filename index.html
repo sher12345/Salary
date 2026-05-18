@@ -614,7 +614,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
       <div class="drawer-section">
         <div class="drawer-section-title">Deductions</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Advance + Food (Rs)</label><input class="form-input mono" type="number" id="d-advance" oninput="drawerCalc()"></div>
+          <div class="form-group">
+          <label class="form-label">Add to Advance + Food (Rs)</label>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Current advance: <strong style="color:var(--orange)" id="d-current-advance">Rs 0</strong></div>
+          <input class="form-input mono" type="number" id="d-advance" placeholder="+ Enter amount to add..." value="0" oninput="drawerCalc()">
+        </div>
           <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="d-fine" oninput="drawerCalc()"></div>
         </div>
       </div>
@@ -680,7 +684,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
         <div class="form-group"><label class="form-label">Working Days</label><input class="form-input mono" type="number" id="m-days" value="30"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Advance + Food (Rs)</label><input class="form-input mono" type="number" id="m-advance" value="0"></div>
+        <div class="form-group"><label class="form-label">Starting Advance + Food (Rs)</label><input class="form-input mono" type="number" id="m-advance" value="0"></div>
         <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="m-fine" value="0"></div>
       </div>
       <div class="form-row">
@@ -1165,7 +1169,8 @@ function openDrawer(idx){
   document.getElementById('d-status').value=e.status;
   document.getElementById('d-salary').value=e.monthly;
   document.getElementById('d-days').value=e.days;
-  document.getElementById('d-advance').value=e.advance||0;
+  document.getElementById('d-advance').value=0;  // Start fresh for adding
+  document.getElementById('d-current-advance').textContent='Rs '+(e.advance||0).toLocaleString('en-PK');
   document.getElementById('d-fine').value=e.fine||0;
   document.getElementById('d-note').value=e.note||'';
   document.getElementById('d-addmoney').value=e.addMoney||0;
@@ -1219,13 +1224,15 @@ function openDrawer(idx){
 function drawerCalc(){
   const monthly=+document.getElementById('d-salary').value||0;
   const days=+document.getElementById('d-days').value||0;
-  const advance=+document.getElementById('d-advance').value||0;
   const fine=+document.getElementById('d-fine').value||0;
   const addMoney=+document.getElementById('d-addmoney').value||0;
   const addReason=document.getElementById('d-addreason').value||'';
   const name=document.getElementById('d-name').value;
   const empId=drawerIdx!==null?getEmps()[drawerIdx]?.id:null;
-  const emp=empId?getEmps().find(e=>e.id===empId):null;
+  const emp=empId?getEmps().find(e=>e.id===empId):null;     // ← emp DEFINED FIRST
+  const advanceInput=+document.getElementById('d-advance').value||0;
+  const currentAdvance=emp?(emp.advance||0):0;              // ← NOW emp exists
+  const advance=currentAdvance+advanceInput;
   const carriedDebt=emp?(emp.carriedDebt||0):0;
   const gross=Math.round((monthly/30)*days);
   const net=gross-advance-fine-carriedDebt+addMoney;
@@ -1237,7 +1244,7 @@ function drawerCalc(){
     <div class="calc-row"><span class="label">Monthly salary</span><span class="val b">${pkr(monthly)}</span></div>
     <div class="calc-row"><span class="label">Per day rate</span><span class="val">${pkr(monthly/30)}</span></div>
     <div class="calc-row"><span class="label">Days worked (${days})</span><span class="val b">${pkr(gross)}</span></div>
-    <div class="calc-row"><span class="label">Advance + food</span><span class="val o">- ${pkr(advance)}</span></div>
+    <div class="calc-row"><span class="label">Advance + food</span><span class="val o">- ${pkr(advance)} ${advanceInput>0?`(Rs ${pkr(currentAdvance)} + Rs ${pkr(advanceInput)})`:''}</span></div>
     <div class="calc-row"><span class="label">Fine / uniform</span><span class="val o">- ${pkr(fine)}</span></div>
     ${carriedDebt>0?`<div class="calc-row"><span class="label" style="color:var(--red)">Previous month debt</span><span class="val r">- ${pkr(carriedDebt)}</span></div>`:''}
     ${addMoney>0?`<div class="calc-row"><span class="label">Extra (${addReason||'Bonus'})</span><span class="val g">+ ${pkr(addMoney)}</span></div>`:''}
@@ -1279,7 +1286,7 @@ function saveDrawer(){
     status:document.getElementById('d-status').value,
     monthly:newSalary,
     days:+document.getElementById('d-days').value||0,
-    advance:+document.getElementById('d-advance').value||0,
+    advance: (emp.advance || 0) + (+document.getElementById('d-advance').value||0),  // ADD to existing
     fine:+document.getElementById('d-fine').value||0,
     note:document.getElementById('d-note').value,
     addMoney:+document.getElementById('d-addmoney').value||0,
