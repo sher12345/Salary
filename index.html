@@ -1229,9 +1229,9 @@ function drawerCalc(){
   const addReason=document.getElementById('d-addreason').value||'';
   const name=document.getElementById('d-name').value;
   const empId=drawerIdx!==null?getEmps()[drawerIdx]?.id:null;
-  const emp=empId?getEmps().find(e=>e.id===empId):null;     // ← emp DEFINED FIRST
+  const emp=empId?getEmps().find(e=>e.id===empId):null;
   const advanceInput=+document.getElementById('d-advance').value||0;
-  const currentAdvance=emp?(emp.advance||0):0;              // ← NOW emp exists
+  const currentAdvance=emp?(emp.advance||0):0;
   const advance=currentAdvance+advanceInput;
   const carriedDebt=emp?(emp.carriedDebt||0):0;
   const gross=Math.round((monthly/30)*days);
@@ -1460,6 +1460,73 @@ function recordLoanPayment(loanId, amount, source='manual', month=null){
   renderList();
 }
 
+// NEW: Easy Pay from Salary System
+function payLoanFromSalary(loanId){
+  const loans=loadLoans();
+  const loan=loans.find(l=>l.id===loanId);
+  if(!loan) return;
+
+  const emps=getEmps();
+  const emp=emps.find(e=>e.id===loan.empId);
+  if(!emp) { toast('Employee not found','orange'); return; }
+
+  const c=calcEmp(emp);
+  if(c.net<=0) { toast('Employee has no positive salary to deduct from','orange'); return; }
+
+  // Calculate how much to pay
+  const maxFromSalary=c.net;
+  const suggestedPay=loan.monthlyDeduct 
+    ? Math.min(loan.monthlyDeduct, loan.remaining, maxFromSalary)
+    : Math.min(loan.remaining, maxFromSalary);
+
+  if(suggestedPay<=0) { toast('Nothing to pay','orange'); return; }
+
+  const confirmMsg=`Deduct ${pkr(suggestedPay)} from ${emp.name}'s salary?\n\n`+
+    `Salary before: ${pkr(c.net)}\n`+
+    `Loan payment: -${pkr(suggestedPay)}\n`+
+    `Salary after: ${pkr(c.net-suggestedPay)}\n\n`+
+    `This will add ${pkr(suggestedPay)} to their advance deduction.`;
+
+  if(!confirm(confirmMsg)) return;
+
+  // 1. Add to employee's advance (so it shows as deduction in salary tab)
+  mutateEmps(emps=>{
+    const e=emps.find(x=>x.id===loan.empId);
+    if(e){
+      e.advance=(e.advance||0)+suggestedPay;
+      const note=`Loan pay ${pkr(suggestedPay)} from ${currentMonth} salary`;
+      e.note=e.note?e.note+' | '+note:note;
+    }
+  });
+
+  // 2. Record the loan repayment
+  const pay=Math.min(suggestedPay, loan.remaining);
+  loan.remaining=Math.max(0, loan.remaining-pay);
+  loan.repayments.push({
+    date:new Date().toISOString().split('T')[0],
+    amount:pay,
+    month:currentMonth,
+    source:'salary'
+  });
+
+  if(loan.remaining===0){
+    loan.status='cleared';
+    loan.clearedDate=new Date().toISOString().split('T')[0];
+    toast(`🎉 Loan fully cleared for ${loan.empName}!`,'green');
+  } else {
+    toast(`✅ Deducted ${pkr(pay)} from salary. Loan remaining: ${pkr(loan.remaining)}`,'green');
+  }
+
+  saveLoans(loans);
+
+  // 3. Update next month's carried debt
+  updateNextMonthCarriedDebt();
+
+  // 4. Refresh everything
+  renderAll();
+  renderLoanTab();
+}
+
 function deleteLoan(loanId){
   if(!confirm('Delete this loan record permanently?')) return;
   const loans=loadLoans().filter(l=>l.id!==loanId);
@@ -1546,14 +1613,26 @@ function renderLoanTable(){
     active.forEach(loan=>{
       const paid=loan.amount-loan.remaining;
       const pct=loan.amount>0?Math.round((paid/loan.amount)*100):0;
-      // Calculate advances till date (sum of all repayments)
+      // Total paid back (all repayments)
       const advTillDate=loan.repayments.reduce((s,r)=>s+r.amount,0);
-      // Salary remaining = monthly salary minus advance this month
+      // Get employee current salary data
       const emps=getEmps();
       const emp=emps.find(e=>e.id===loan.empId);
-      const salaryNet=emp?calcEmp(emp).net:0;
-      // Boss will pay = net salary after deductions is still positive
-      const bossPay=salaryNet>0;
+      const c=emp?calcEmp(emp):{gross:0,net:0};
+
+      // Calculate suggested payment: min of (loan remaining, monthlyDeduct, net salary if positive)
+      const maxFromSalary = c.net > 0 ? c.net : 0;
+      const suggestedPay = loan.monthlyDeduct 
+        ? Math.min(loan.monthlyDeduct, loan.remaining, maxFromSalary || loan.monthlyDeduct)
+        : Math.min(loan.remaining, maxFromSalary || loan.remaining);
+
+      // Salary after paying loan
+      const salaryAfterLoan = c.net - suggestedPay;
+      const canPayFromSalary = c.net > 0 && suggestedPay > 0;
+
+      // Check if already paid this month
+      const alreadyPaidThisMonth = loan.repayments.some(r=>r.month===currentMonth);
+
       const tr=document.createElement('tr');
       tr.innerHTML=`
         <td>
@@ -1563,7 +1642,7 @@ function renderLoanTable(){
         </td>
         <td class="num loan-amt-total">${pkr(loan.amount)}</td>
         <td class="num" style="color:var(--orange)">${pkr(advTillDate)}</td>
-        <td class="num" style="color:${salaryNet>0?'var(--green)':salaryNet<0?'var(--red)':'var(--text3)'}">${emp?pkr(salaryNet):'—'}</td>
+        <td class="num" style="color:${c.net>0?'var(--green)':c.net<0?'var(--red)':'var(--text3)'}">${emp?pkr(c.net):'—'}</td>
         <td class="num loan-amt-paid">${pkr(paid)}</td>
         <td class="num loan-amt-remaining">${pkr(loan.remaining)}</td>
         <td>
@@ -1573,11 +1652,22 @@ function renderLoanTable(){
           </div>
           ${loan.monthlyDeduct?`<div style="font-size:10px;color:var(--text3);margin-top:4px">-${pkr(loan.monthlyDeduct)}/mo</div>`:''}
         </td>
-        <td style="text-align:center"><span class="loan-boss-badge ${bossPay?'loan-boss-yes':'loan-boss-no'}">${bossPay?'Yes':'No'}</span></td>
+        <td style="text-align:center">
+          ${canPayFromSalary 
+            ? `<span class="loan-boss-badge loan-boss-yes">Rs ${pkr(suggestedPay)}</span>
+               <div style="font-size:10px;color:var(--text3);margin-top:4px">After: ${pkr(salaryAfterLoan)}</div>`
+            : `<span class="loan-boss-badge loan-boss-no">No Salary</span>`
+          }
+        </td>
         <td><div class="loan-remarks">${loan.remarks||'—'}</div></td>
         <td>
           <div class="loan-actions">
-            <button class="btn btn-green btn-sm" onclick="openLoanDetailModal(${loan.id})">Pay</button>
+            ${canPayFromSalary && !alreadyPaidThisMonth
+              ? `<button class="btn btn-green btn-sm" onclick="payLoanFromSalary(${loan.id})" title="Deduct Rs ${pkr(suggestedPay)} from salary">💰 Pay ${pkr(suggestedPay)}</button>`
+              : alreadyPaidThisMonth
+                ? `<span style="font-size:11px;color:var(--green)">✓ Paid</span>`
+                : `<button class="btn btn-ghost btn-sm" onclick="openLoanDetailModal(${loan.id})">Pay</button>`
+            }
             <button class="btn btn-ghost btn-sm" onclick="openLoanDetailModal(${loan.id})">Detail</button>
             <button class="btn btn-red btn-sm" onclick="deleteLoan(${loan.id})">×</button>
           </div>
