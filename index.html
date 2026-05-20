@@ -390,12 +390,21 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
     </div>
   </div>
   <div class="header-actions">
+    <button class="btn btn-ghost" onclick="exportData()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+    <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Import
+    </button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
     <button class="btn btn-ghost" onclick="openAddModal()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Employee
     </button>
     <button class="btn btn-ghost" onclick="resetToDefault()">Reset April</button>
-    <button class="btn btn-accent" onclick="populatePrintReport();setTimeout(()=>window.print(),100)">
+    <button class="btn btn-accent" onclick="handlePrint()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Print
     </button>
@@ -851,7 +860,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 // ══════════════════════════════════════════════
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const YEARS = [2025,2026,2027];
-const ADMIN_PASSWORD = '7530';
+const ADMIN_PASSWORD = localStorage.getItem('ovenx_admin_password') || '7530';
 const COMPANY = {
   name:"OvenX-Pakistan", businessName:"The OvenX",
   address:"Block A, Sheikh Abdul Hameed Rd, A Block Gulgasht Colony, Multan, Punjab 60700, Pakistan",
@@ -963,12 +972,20 @@ function mutateEmps(fn){
   saveEmployees(currentMonth, emps);
 }
 
-function calcEmp(e){
-  const perDay = e.monthly / 30;
+function getDaysInMonth(monthKey){
+  const [mn, yr] = monthKey.split('-');
+  const mi = MONTHS.indexOf(mn);
+  if(mi === -1) return 30;
+  return new Date(parseInt(yr), mi + 1, 0).getDate();
+}
+
+function calcEmp(e, monthKey){
+  const monthDays = getDaysInMonth(monthKey || currentMonth);
+  const perDay = e.monthly / monthDays;
   const gross = Math.round(perDay * e.days);
   const totalDeductions = (e.advance || 0) + (e.fine || 0) + (e.carriedDebt || 0);
   const net = gross - totalDeductions + (e.addMoney || 0);
-  return { gross, net, carriedDebt: e.carriedDebt || 0, totalDeductions };
+  return { gross, net, carriedDebt: e.carriedDebt || 0, totalDeductions, perDay: Math.round(perDay), monthDays };
 }
 
 // ══════════════════════════════════════════════
@@ -1242,9 +1259,10 @@ function drawerCalc(){
   const loanRemaining=empId?getTotalLoanRemaining(empId):0;
   const loans=empId?getLoanForEmployee(empId):[];
   const monthlyLoanDeduct=loans.reduce((s,l)=>s+(l.monthlyDeduct||0),0);
+  const monthDays = getDaysInMonth(currentMonth);
   document.getElementById('calcBox').innerHTML=`
     <div class="calc-row"><span class="label">Monthly salary</span><span class="val b">${pkr(monthly)}</span></div>
-    <div class="calc-row"><span class="label">Per day rate</span><span class="val">${pkr(monthly/30)}</span></div>
+    <div class="calc-row"><span class="label">Per day rate (÷${monthDays})</span><span class="val">${pkr(monthly/monthDays)}</span></div>
     <div class="calc-row"><span class="label">Days worked (${days})</span><span class="val b">${pkr(gross)}</span></div>
     <div class="calc-row"><span class="label">Advance + food</span><span class="val o">- ${pkr(advance)} ${advanceInput>0?`(Rs ${pkr(currentAdvance)} + Rs ${pkr(advanceInput)})`:''}</span></div>
     <div class="calc-row"><span class="label">Fine / uniform</span><span class="val o">- ${pkr(fine)}</span></div>
@@ -1405,7 +1423,15 @@ let loanIdCounter = 1;
 
 function initLoanIdCounter(){
   const loans=loadLoans();
-  if(loans.length>0) loanIdCounter=Math.max(...loans.map(l=>l.id||0))+1;
+  const stored = parseInt(localStorage.getItem('ovenx_loan_counter')||'0');
+  const maxFromLoans = loans.length>0 ? Math.max(...loans.map(l=>l.id||0)) : 0;
+  loanIdCounter = Math.max(stored, maxFromLoans) + 1;
+}
+
+function getNextLoanId(){
+  const id = loanIdCounter++;
+  localStorage.setItem('ovenx_loan_counter', String(loanIdCounter));
+  return id;
 }
 
 function addLoan(){
@@ -1420,7 +1446,7 @@ function addLoan(){
   if(!emp){ toast('Employee not found','orange'); return; }
   const loans=loadLoans();
   const newLoan={
-    id:loanIdCounter++,
+    id:getNextLoanId(),
     empId, empName:emp.name, empDesig:emp.desig,
     amount, remaining:amount, date, monthlyDeduct, remarks,
     status:'active',
@@ -1541,15 +1567,23 @@ function deleteLoan(loanId){
 function autoDeductLoans(){
   const loans=loadLoans().filter(l=>l.status==='active'&&l.monthlyDeduct>0);
   if(!loans.length){ toast('No active loans with monthly deductions','orange'); return; }
-  // Check if already deducted this month
   const alreadyDone=loans.filter(l=>l.repayments.some(r=>r.month===currentMonth&&r.source==='auto'));
-  if(alreadyDone.length>0&&!confirm(`${alreadyDone.length} loan(s) already deducted for ${currentMonth}. Re-apply?`)) return;
+  if(alreadyDone.length>0){
+    toast(`Already auto-deducted ${alreadyDone.length} loan(s) for ${currentMonth}. Use Pay button for manual adjustments.`,'orange');
+    return;
+  }
+  // Build summary for confirmation
+  const emps=getEmps();
+  const lines=loans.map(l=>{
+    const emp=emps.find(e=>e.id===l.empId);
+    const deduct=Math.min(l.monthlyDeduct,l.remaining);
+    return `• ${l.empName}: -${pkr(deduct)}`;
+  }).join('\n');
+  if(!confirm(`Auto-deduct loan installments for ${currentMonth}?\n\n${lines}\n\nThis will add to each employee's advance deduction.`)) return;
   let count=0;
   loans.forEach(loan=>{
-    // Skip if already done this month
     if(loan.repayments.some(r=>r.month===currentMonth&&r.source==='auto')) return;
     const deduct=Math.min(loan.monthlyDeduct, loan.remaining);
-    // Add to employee's advance this month
     mutateEmps(emps=>{
       const emp=emps.find(e=>e.id===loan.empId);
       if(emp){ emp.advance=(emp.advance||0)+deduct; emp.note=(emp.note?emp.note+' | ':'')+`Loan deduct ${pkr(deduct)}`; }
@@ -1784,7 +1818,11 @@ function toggleBulkMode(){
   renderList();
 }
 function toggleSelect(e,id){ e.stopPropagation(); selectedIds.has(id)?selectedIds.delete(id):selectedIds.add(id); document.getElementById('bulkCount').textContent=selectedIds.size+' selected'; renderList(); }
-function selectAll(){ getEmps().forEach(e=>selectedIds.add(e.id)); document.getElementById('bulkCount').textContent=selectedIds.size+' selected'; renderList(); }
+function selectAll(){ 
+  getEmps().filter(e=>e.status==='Active').forEach(e=>selectedIds.add(e.id)); 
+  document.getElementById('bulkCount').textContent=selectedIds.size+' selected'; 
+  renderList(); 
+}
 function clearSelection(){ selectedIds.clear(); document.getElementById('bulkCount').textContent='0 selected'; renderList(); }
 function applyBulkAdvance(){
   const amt=+document.getElementById('bulkAmount').value;
@@ -1949,6 +1987,146 @@ function renderAll(){
   renderList();
   // If loan tab is visible, refresh it too
   if(document.getElementById('tab-loans').classList.contains('active')) renderLoanTab();
+}
+// ══════════════════════════════════════════════
+//  EXPORT / IMPORT
+// ══════════════════════════════════════════════
+function exportData(){
+  const data = {
+    version: 2,
+    exportDate: new Date().toISOString(),
+    exportMonth: currentMonth,
+    salaryData: {},
+    loans: loadLoans(),
+    loanCounter: loanIdCounter
+  };
+  // Export all months that have data
+  for(let i=0; i<localStorage.length; i++){
+    const key = localStorage.key(i);
+    if(key && key.startsWith('ovenx_v2_')){
+      data.salaryData[key] = JSON.parse(localStorage.getItem(key));
+    }
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ovenx_payroll_backup_${currentMonth}_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup exported successfully','green');
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  if(!confirm('Import will MERGE with existing data. Existing months will be overwritten if they exist in the file. Continue?')) {
+    event.target.value='';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!data.version || !data.salaryData){
+        toast('Invalid backup file format','orange');
+        return;
+      }
+      // Restore salary data
+      let monthsRestored = 0;
+      Object.keys(data.salaryData).forEach(key => {
+        localStorage.setItem(key, JSON.stringify(data.salaryData[key]));
+        monthsRestored++;
+      });
+      // Restore loans
+      if(data.loans) saveLoans(data.loans);
+      // Restore loan counter
+      if(data.loanCounter){
+        loanIdCounter = data.loanCounter;
+        localStorage.setItem('ovenx_loan_counter', String(loanIdCounter));
+      }
+      // Switch to exported month if available
+      if(data.exportMonth) currentMonth = data.exportMonth;
+      buildMonthTabs();
+      renderAll();
+      toast(`Imported ${monthsRestored} month(s) of data successfully`,'green');
+    } catch(err) {
+      toast('Failed to parse backup file: '+err.message,'orange');
+    }
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════
+//  HANDLE PRINT BY ACTIVE TAB
+// ══════════════════════════════════════════════
+function handlePrint(){
+  const loansTabActive = document.getElementById('tab-loans').classList.contains('active');
+  if(loansTabActive){
+    printLoansReport();
+  } else {
+    populatePrintReport();
+    setTimeout(()=>window.print(), 100);
+  }
+}
+
+function printLoansReport(){
+  const loans = loadLoans();
+  const active = loans.filter(l=>l.status==='active');
+  const cleared = loans.filter(l=>l.status==='cleared');
+  const totalLoaned = loans.reduce((s,l)=>s+l.amount,0);
+  const outstanding = active.reduce((s,l)=>s+l.remaining,0);
+  const recovered = totalLoaned - outstanding;
+
+  const rows = active.map((l,i) => {
+    const paid = l.amount - l.remaining;
+    const pct = l.amount > 0 ? Math.round((paid/l.amount)*100) : 0;
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${l.empName}</strong><br><span style="font-size:8pt;color:#666">${l.empDesig}</span></td>
+      <td style="text-align:right">Rs ${fmt(l.amount)}</td>
+      <td style="text-align:right;color:#2d8a4e">Rs ${fmt(paid)}</td>
+      <td style="text-align:right;color:#c0392b">Rs ${fmt(l.remaining)}</td>
+      <td style="text-align:right">${pct}%</td>
+      <td>Rs ${fmt(l.monthlyDeduct||0)}/mo</td>
+      <td>${l.date||'—'}</td>
+      <td>${l.remarks||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  const win = window.open('','_blank','width=1000,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Loan Report — ${currentMonth}</title>
+  <style>
+    body{font-family:Arial,sans-serif;padding:40px;color:#1a1a1a;font-size:11pt}
+    h1{font-size:18pt;margin-bottom:4px}
+    .sub{color:#666;font-size:10pt;margin-bottom:20px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+    .stat{border:1px solid #ddd;border-radius:6px;padding:12px;text-align:center}
+    .stat-label{font-size:8pt;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:4px}
+    .stat-val{font-size:14pt;font-weight:700}
+    table{width:100%;border-collapse:collapse;font-size:9pt}
+    th{background:#f5f5f5;border-bottom:2px solid #1a1a1a;padding:8px 6px;text-align:left;font-size:8pt;text-transform:uppercase}
+    td{padding:7px 6px;border-bottom:1px solid #e5e5e5;vertical-align:top}
+    tr:nth-child(even){background:#fafafa}
+    .footer{margin-top:30px;text-align:center;font-size:9pt;color:#888;border-top:1px solid #ddd;padding-top:16px}
+  </style></head><body>
+  <h1>OvenX — Loan & Debt Report</h1>
+  <div class="sub">${currentMonth.replace('-',' ')} | Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})}</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Total Loaned</div><div class="stat-val" style="color:#7c3aed">Rs ${fmt(totalLoaned)}</div></div>
+    <div class="stat"><div class="stat-label">Recovered</div><div class="stat-val" style="color:#2d8a4e">Rs ${fmt(recovered)}</div></div>
+    <div class="stat"><div class="stat-label">Outstanding</div><div class="stat-val" style="color:#c0392b">Rs ${fmt(outstanding)}</div></div>
+    <div class="stat"><div class="stat-label">Active Debtors</div><div class="stat-val" style="color:#d68910">${active.length}</div></div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>Employee</th><th>Loan Amount</th><th>Paid Back</th><th>Remaining</th><th>Progress</th><th>Monthly</th><th>Issued</th><th>Remarks</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="footer">OvenX Pakistan — 0300-2450301 — theovenx.com</div>
+  </body></html>`);
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); };
 }
 
 // ══════════════════════════════════════════════
