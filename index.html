@@ -972,20 +972,12 @@ function mutateEmps(fn){
   saveEmployees(currentMonth, emps);
 }
 
-function getDaysInMonth(monthKey){
-  const [mn, yr] = monthKey.split('-');
-  const mi = MONTHS.indexOf(mn);
-  if(mi === -1) return 30;
-  return new Date(parseInt(yr), mi + 1, 0).getDate();
-}
-
-function calcEmp(e, monthKey){
-  const monthDays = getDaysInMonth(monthKey || currentMonth);
-  const perDay = e.monthly / monthDays;
+function calcEmp(e){
+  const perDay = e.monthly / 30;
   const gross = Math.round(perDay * e.days);
   const totalDeductions = (e.advance || 0) + (e.fine || 0) + (e.carriedDebt || 0);
   const net = gross - totalDeductions + (e.addMoney || 0);
-  return { gross, net, carriedDebt: e.carriedDebt || 0, totalDeductions, perDay: Math.round(perDay), monthDays };
+  return { gross, net, carriedDebt: e.carriedDebt || 0, totalDeductions };
 }
 
 // ══════════════════════════════════════════════
@@ -1259,10 +1251,9 @@ function drawerCalc(){
   const loanRemaining=empId?getTotalLoanRemaining(empId):0;
   const loans=empId?getLoanForEmployee(empId):[];
   const monthlyLoanDeduct=loans.reduce((s,l)=>s+(l.monthlyDeduct||0),0);
-  const monthDays = getDaysInMonth(currentMonth);
   document.getElementById('calcBox').innerHTML=`
     <div class="calc-row"><span class="label">Monthly salary</span><span class="val b">${pkr(monthly)}</span></div>
-    <div class="calc-row"><span class="label">Per day rate (÷${monthDays})</span><span class="val">${pkr(monthly/monthDays)}</span></div>
+    <div class="calc-row"><span class="label">Per day rate (÷30)</span><span class="val">${pkr(monthly/30)}</span></div>
     <div class="calc-row"><span class="label">Days worked (${days})</span><span class="val b">${pkr(gross)}</span></div>
     <div class="calc-row"><span class="label">Advance + food</span><span class="val o">- ${pkr(advance)} ${advanceInput>0?`(Rs ${pkr(currentAdvance)} + Rs ${pkr(advanceInput)})`:''}</span></div>
     <div class="calc-row"><span class="label">Fine / uniform</span><span class="val o">- ${pkr(fine)}</span></div>
