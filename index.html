@@ -612,7 +612,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
         <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="d-name" oninput="drawerCalc()"></div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Designation</label><input class="form-input" id="d-desig" oninput="drawerCalc()"></div>
-          <div class="form-group"><label class="form-label">Status</label><select class="form-input" id="d-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+          <div class="form-group"><label class="form-label">Status</label>
+            <select class="form-input" id="d-status" onchange="drawerCalc()">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Left">Left — No New Salary</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="drawer-section">
@@ -626,11 +632,25 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
         <div class="drawer-section-title">Deductions</div>
         <div class="form-row">
           <div class="form-group">
-          <label class="form-label">Add to Advance + Food (Rs)</label>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Current advance: <strong style="color:var(--orange)" id="d-current-advance">Rs 0</strong></div>
-          <input class="form-input mono" type="number" id="d-advance" placeholder="+ Enter amount to add..." value="0" oninput="drawerCalc()">
-        </div>
-          <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="d-fine" oninput="drawerCalc()"></div>
+  <label class="form-label">Advance + Food (Rs)</label>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-top:2px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px">
+      <span style="color:var(--text3)">Current saved advance</span>
+      <strong style="font-family:var(--mono);color:var(--orange)" id="d-current-advance">Rs 0</strong>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:18px;font-weight:600;color:var(--text3);line-height:1;flex-shrink:0">+</span>
+      <input class="form-input mono" type="text" id="d-advance" placeholder="e.g. 5000+2000 or 3000-500" value="" oninput="drawerCalc()" style="flex:1;margin:0">
+    </div>
+    <div id="d-advance-preview" style="display:none;border-top:1px dashed var(--border2);margin-top:8px;padding-top:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:var(--text3)">New total will be</span>
+        <span style="font-family:var(--mono);font-weight:600;color:var(--red)" id="d-advance-new-total">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="d-fine" oninput="drawerCalc()"></div>
         </div>
       </div>
       <div class="drawer-section">
@@ -686,7 +706,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   <div class="modal">
     <div class="modal-header"><h2>Add New Employee</h2><button class="drawer-close" onclick="closeAddModal()">✕</button></div>
     <div class="modal-body">
-      <div class="form-row">
+     <div class="form-row">
         <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="m-name" placeholder="e.g. Bilal Ahmed"></div>
         <div class="form-group"><label class="form-label">Designation</label><input class="form-input" id="m-desig" placeholder="Chef, Waiter..."></div>
       </div>
@@ -699,7 +719,13 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
         <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="m-fine" value="0"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Status</label><select class="form-input" id="m-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-input" id="m-status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Left">Left — No New Salary</option>
+          </select>
+        </div>
         <div class="form-group"><label class="form-label">Note (optional)</label><input class="form-input" id="m-note" placeholder="e.g. 5k advance monthly"></div>
       </div>
       <div class="form-row">
@@ -973,6 +999,12 @@ function mutateEmps(fn){
 }
 
 function calcEmp(e){
+  if(e.status === 'Left'){
+    const carriedDebt = e.carriedDebt || 0;
+    const fine = e.fine || 0;
+    const net = -(carriedDebt + fine);
+    return { gross:0, net, carriedDebt, totalDeductions: carriedDebt + fine };
+  }
   const perDay = e.monthly / 30;
   const gross = Math.round(perDay * e.days);
   const totalDeductions = (e.advance || 0) + (e.fine || 0) + (e.carriedDebt || 0);
@@ -1142,6 +1174,7 @@ function renderList(){
         ${e.note?`<div class="emp-note-tag">${e.note}</div>`:''}
         ${hasLoan?`<div class="emp-loan-tag">🏦 Loan: ${pkr(loanRemaining)}</div>`:''}
         ${e.addReason?`<div class="emp-note-tag" style="background:rgba(62,207,122,0.15);color:var(--green)">${e.addReason}</div>`:''}
+        ${e.status==='Left'?`<div class="emp-note-tag" style="background:rgba(242,107,91,0.15);color:var(--red)">⛔ Left — owes ${pkr(e.carriedDebt||0)}</div>`:''}
       </div>
       <div class="emp-cell" onclick="openDrawer(${realIdx})">${e.desig||'—'}</div>
       <div class="emp-cell highlight" onclick="openDrawer(${realIdx})">${pkr(e.monthly)}</div>
@@ -1241,9 +1274,28 @@ function drawerCalc(){
   const name=document.getElementById('d-name').value;
   const empId=drawerIdx!==null?getEmps()[drawerIdx]?.id:null;
   const emp=empId?getEmps().find(e=>e.id===empId):null;
-  const advanceInput=+document.getElementById('d-advance').value||0;
+  const advanceRaw=document.getElementById('d-advance').value.trim();
   const currentAdvance=emp?(emp.advance||0):0;
+  let advanceInput=0;
+  if(advanceRaw){
+    try{
+      const safe=advanceRaw.replace(/[^0-9+\-. ]/g,'');
+      if(safe) advanceInput=Function('"use strict";return ('+safe+')')();
+      if(isNaN(advanceInput)||!isFinite(advanceInput)) advanceInput=0;
+    } catch(e){ advanceInput=0; }
+  }
   const advance=currentAdvance+advanceInput;
+  const previewEl=document.getElementById('d-advance-preview');
+  const newTotalEl=document.getElementById('d-advance-new-total');
+  if(previewEl&&newTotalEl){
+    if(advanceInput>0){
+      previewEl.style.display='block';
+      newTotalEl.textContent='Rs '+advance.toLocaleString('en-PK');
+    } else {
+      previewEl.style.display='none';
+    }
+  }
+
   const carriedDebt=emp?(emp.carriedDebt||0):0;
   const gross=Math.round((monthly/30)*days);
   const net=gross-advance-fine-carriedDebt+addMoney;
@@ -1297,7 +1349,15 @@ function saveDrawer(){
     status:document.getElementById('d-status').value,
     monthly:newSalary,
     days:+document.getElementById('d-days').value||0,
-    advance: (emp.advance || 0) + (+document.getElementById('d-advance').value||0),  // ADD to existing
+    advance: (()=>{
+  const raw=document.getElementById('d-advance').value.trim();
+  if(!raw) return emp.advance||0;
+  try{
+    const safe=raw.replace(/[^0-9+\-. ]/g,'');
+    const inp=safe?Function('"use strict";return ('+safe+')')():0;
+    return (emp.advance||0)+(isNaN(inp)||!isFinite(inp)?0:inp);
+  } catch(e){ return emp.advance||0; }
+})(),
     fine:+document.getElementById('d-fine').value||0,
     note:document.getElementById('d-note').value,
     addMoney:+document.getElementById('d-addmoney').value||0,
