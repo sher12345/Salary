@@ -75,7 +75,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
 .month-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
 
 /* ── STATS ── */
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:20px 28px}
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;padding:20px 28px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 18px;cursor:default}
 .stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:8px}
 .stat-val{font-family:var(--mono);font-size:20px;font-weight:600;line-height:1}
@@ -349,6 +349,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   .print-emp-desig{font-size:8pt;color:#666}
   .print-neg{color:#c0392b;font-weight:700}
   .print-pos{color:#2d8a4e;font-weight:700}
+
+  .emp-row.excluded-row { 
+    opacity: 0.45; 
+    border-left: 3px solid var(--text3);
+    background: var(--surface2) !important;
+}
+.emp-row.excluded-row .emp-name::after {
+    content: ' — EXCLUDED';
+    font-size: 10px;
+    color: var(--text3);
+    font-weight: 600;
+    letter-spacing: 1px;
+}
   
   /* Cash Breakdown Print */
   .print-cash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
@@ -432,6 +445,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   <div class="stat-card s-advance"><div class="stat-label">Advances Given</div><div class="stat-val" id="s-advance">—</div><div class="stat-sub">Advance + fines</div></div>
   <div class="stat-card s-takeback"><div class="stat-label">Take Back</div><div class="stat-val" id="s-takeback">—</div><div class="stat-sub">Owe us back</div></div>
   <div class="stat-card s-cash"><div class="stat-label">Physical Cash</div><div class="stat-val" id="s-cash">—</div><div class="stat-sub">Notes to prepare</div></div>
+  <div class="stat-card" style="border-left: 3px solid var(--text3);">
+    <div class="stat-label">Excluded</div>
+    <div class="stat-val" id="s-excluded" style="color:var(--text3)">0</div>
+    <div class="stat-sub">Not in totals</div>
+  </div>
 </div>
 
 <!-- CASH BREAKDOWN -->
@@ -651,6 +669,24 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
   </div>
 </div>
 <div class="form-group"><label class="form-label">Fine / Uniform (Rs)</label><input class="form-input mono" type="number" id="d-fine" oninput="drawerCalc()"></div>
+<div class="drawer-section">
+  <div class="drawer-section-title">Partial Advance Settlement</div>
+  <div style="background:var(--orange-bg);border:1px solid rgba(245,166,35,0.3);border-radius:var(--r);padding:14px 16px">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">
+      If you want to deduct only a portion of the advance this month, enter the amount to deduct. The rest will carry to next month.
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" style="color:var(--orange)">Deduct This Month (Rs)</label>
+        <input class="form-input mono" type="number" id="d-partial-advance" placeholder="Leave empty to deduct all" oninput="drawerCalc()">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" style="color:var(--red)">Will Carry Forward</label>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-weight:600;color:var(--red)" id="d-carry-forward">Rs 0</div>
+      </div>
+    </div>
+  </div>
+</div>
         </div>
       </div>
       <div class="drawer-section">
@@ -944,7 +980,7 @@ function loadEmployees(month){
   if(raw) return JSON.parse(raw);
   if(month === 'April-2026') {
     // Add carriedDebt field to default employees for consistency
-    return JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)).map(e => ({...e, carriedDebt: 0}));
+    return JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)).map(e => ({...e, carriedDebt: 0, excluded: false}));
   }
   const prev = getPrevMonth(month);
   if(prev){
@@ -1099,12 +1135,16 @@ function switchMonth(key){
 function renderStats(emps){
   let gross=0,payable=0,advance=0,takeback=0,carried=0;
   emps.forEach(e=>{
+    if(e.excluded) return; // ← ADD THIS LINE
     const c=calcEmp(e);
     gross+=c.gross; 
     advance+=(e.advance||0)+(e.fine||0);
     carried+=(e.carriedDebt||0);
     if(c.net>0) payable+=c.net; else takeback+=Math.abs(c.net);
   });
+  const excludedCount = emps.filter(e => e.excluded).length;
+  const excludedEl = document.getElementById('s-excluded');
+  if(excludedEl) excludedEl.textContent = excludedCount;
   document.getElementById('s-gross').textContent=pkr(gross);
   document.getElementById('s-payable').textContent=pkr(payable);
   document.getElementById('s-advance').textContent=pkr(advance + carried);
@@ -1119,7 +1159,9 @@ function renderCash(emps){
   const grid=document.getElementById('cashGrid');
   grid.innerHTML='';
   const pay=[],take=[];
-  emps.forEach(e=>{ const c=calcEmp(e); if(c.net>0) pay.push({...e,net:c.net}); else if(c.net<0) take.push({...e,net:c.net}); });
+  emps.forEach(e=>{ 
+  if(e.excluded) return; // ← ADD THIS LINE
+  const c=calcEmp(e); if(c.net>0) pay.push({...e,net:c.net}); else if(c.net<0) take.push({...e,net:c.net}); });
   pay.sort((a,b)=>b.net-a.net); take.sort((a,b)=>a.net-b.net);
   if(pay.length){
     const h=document.createElement('div'); h.className='cash-section-head g'; h.textContent='✓ Pay out'; grid.appendChild(h);
@@ -1170,7 +1212,7 @@ function renderList(){
     const loanRemaining=getTotalLoanRemaining(e.id);
     const hasLoan=loanRemaining>0;
     const tr=document.createElement('div');
-    tr.className='emp-row'+(isNeg?' negative-row':'')+(hasLoan?' has-loan':'')+(selectedIds.has(e.id)?' selected':'');
+    tr.className='emp-row'+(isNeg?' negative-row':'')+(hasLoan?' has-loan':'')+(selectedIds.has(e.id)?' selected':'')+(e.excluded?' excluded-row':'');
     tr.innerHTML=`
       <input type="checkbox" class="emp-check" ${selectedIds.has(e.id)?'checked':''} onclick="toggleSelect(event,${e.id})" ${bulkMode?'':'style="display:none"'}>
       <div class="emp-info" onclick="openDrawer(${realIdx})">
@@ -1190,7 +1232,7 @@ function renderList(){
         ${e.carriedDebt ? `<span style="font-size:10px;color:var(--red);display:block">(inc. ${pkr(e.carriedDebt)} debt)</span>` : ''}
       </div>
       <div class="emp-cell ${c.net>0?'green':c.net<0?'red':'zero'}" onclick="openDrawer(${realIdx})">${c.net>=0?pkr(c.net):'('+pkr(c.net)+')'}</div>
-      <div class="emp-actions">
+            <div class="emp-actions">
         <button class="btn-icon" title="Edit" onclick="openDrawer(${realIdx})">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
@@ -1199,6 +1241,15 @@ function renderList(){
         </button>`:''}
         <button class="btn-icon" title="WhatsApp Slip" onclick="quickShare(${realIdx});event.stopPropagation();">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="color:var(--green)"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </button>
+        <button class="btn-icon" title="${e.excluded?'Include in payroll':'Exclude from payroll'}" 
+          onclick="toggleExclude(${realIdx});event.stopPropagation();"
+          style="color:${e.excluded?'var(--red)':'var(--text3)'}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            ${e.excluded 
+              ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+              : '<polyline points="20 6 9 17 4 12"/>'}
+          </svg>
         </button>
       </div>`;
     list.appendChild(tr);
@@ -1219,6 +1270,8 @@ function openDrawer(idx){
   document.getElementById('d-salary').value=e.monthly;
   document.getElementById('d-days').value=e.days;
   document.getElementById('d-advance').value=0;  // Start fresh for adding
+  document.getElementById('d-partial-advance').value='';
+  document.getElementById('d-carry-forward').textContent='Rs 0';
   document.getElementById('d-current-advance').textContent='Rs '+(e.advance||0).toLocaleString('en-PK');
   document.getElementById('d-fine').value=e.fine||0;
   document.getElementById('d-note').value=e.note||'';
@@ -1290,6 +1343,13 @@ function drawerCalc(){
     } catch(e){ advanceInput=0; }
   }
   const advance=currentAdvance+advanceInput;
+  const partialInput = +document.getElementById('d-partial-advance').value||0;
+const effectiveAdvance = partialInput > 0 
+  ? Math.min(partialInput, advance) 
+  : advance;
+const carryForward = advance - effectiveAdvance;
+const carryEl = document.getElementById('d-carry-forward');
+if(carryEl) carryEl.textContent = carryForward > 0 ? 'Rs '+carryForward.toLocaleString('en-PK') : 'Rs 0';
   const previewEl=document.getElementById('d-advance-preview');
   const newTotalEl=document.getElementById('d-advance-new-total');
   if(previewEl&&newTotalEl){
@@ -1307,7 +1367,7 @@ const perDay=monthly/WORK_DAYS;
 const gross=days>=WORK_DAYS
   ?Math.round(monthly+(days-WORK_DAYS)*perDay)
   :Math.round(days*perDay);
-  const net=gross-advance-fine-carriedDebt+addMoney;
+  const net = gross - effectiveAdvance - fine - carriedDebt + addMoney;
   // Loan info
   const loanRemaining=empId?getTotalLoanRemaining(empId):0;
   const loans=empId?getLoanForEmployee(empId):[];
@@ -1371,7 +1431,8 @@ function saveDrawer(){
     note:document.getElementById('d-note').value,
     addMoney:+document.getElementById('d-addmoney').value||0,
     addReason:document.getElementById('d-addreason').value||'',
-    carriedDebt: emp.carriedDebt || 0  // Preserve carried debt
+    carriedDebt: emp.carriedDebt || 0,
+partialAdvance: +document.getElementById('d-partial-advance').value||0,
   };
   if(newSalary!==oldSalary && newSalary>0){
     pendingSave={drawerIdx,newData};
@@ -1382,14 +1443,39 @@ function saveDrawer(){
 }
 
 function doSave(sd){
-  mutateEmps(emps=>{
+  mutateEmps(emps => {
     Object.assign(emps[sd.drawerIdx], sd.newData);
   });
 
-  // After saving current month, update next month's carriedDebt
-  updateNextMonthCarriedDebt();
+  // Handle partial advance carry-forward to next month
+  const savedEmp = getEmps()[sd.drawerIdx];
+  const partial = sd.newData.partialAdvance || 0;
+  if(partial > 0){
+    const totalAdv = savedEmp.advance || 0;
+    const carry = Math.max(0, totalAdv - partial);
+    if(carry > 0){
+      const next = getNextMonth(currentMonth);
+      if(next){
+        const nextRaw = localStorage.getItem(storageKey(next));
+        if(nextRaw){
+          const nextEmps = JSON.parse(nextRaw);
+          const nextEmp = nextEmps.find(e => e.id === savedEmp.id);
+          if(nextEmp){
+            nextEmp.carriedDebt = (nextEmp.carriedDebt || 0) + carry;
+            nextEmp.note = `Advance carry Rs ${carry.toLocaleString('en-PK')} from ${currentMonth}`;
+            saveEmployees(next, nextEmps);
+            toast(`Rs ${carry.toLocaleString('en-PK')} carried to ${next}`, 'orange');
+          }
+        }
+      }
+    }
+  }
 
-  pendingSave=null; closeDrawerForce(); renderAll(); toast('Saved','green');
+  updateNextMonthCarriedDebt();
+  pendingSave = null;
+  closeDrawerForce();
+  renderAll();
+  toast('Saved', 'green');
 }
 
 function updateNextMonthCarriedDebt(){
@@ -1975,6 +2061,7 @@ function populatePrintReport(){
   // Stats
   let totalGross=0,netPayable=0,totalDeduct=0,totalOwing=0;
   emps.forEach(e=>{
+    if(e.excluded) return; // ← ADD THIS LINE
     const c=calcEmp(e);
     totalGross+=c.gross;
     totalDeduct+=(e.advance||0)+(e.fine||0)+(e.carriedDebt||0);
@@ -2198,6 +2285,19 @@ document.getElementById('ln-date').value=new Date().toISOString().split('T')[0];
 initLoanIdCounter();
 buildMonthTabs();
 renderAll();
+function toggleExclude(idx){
+  mutateEmps(emps => {
+    emps[idx].excluded = !emps[idx].excluded;
+  });
+  renderAll();
+  const emp = getEmps()[idx];
+  toast(
+    emp.excluded 
+      ? `${emp.name} excluded from payroll totals` 
+      : `${emp.name} included back in payroll`,
+    emp.excluded ? 'orange' : 'green'
+  );
+}
 </script>
 </body>
 </html>
