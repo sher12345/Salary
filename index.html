@@ -1943,8 +1943,29 @@ function openLoanDetailModal(loanId){
 function submitLoanPayment(loanId){
   const amount=+document.getElementById('lm-pay-amount').value||0;
   if(!amount){ toast('Enter a payment amount','orange'); return; }
+
+  const loans=loadLoans();
+  const loan=loans.find(l=>l.id===loanId);
+  if(!loan){ toast('Loan not found','orange'); return; }
+
+  const pay=Math.min(amount, loan.remaining);
+
+  // NEW: deduct this payment from the employee's current-month advance
+  // so it actually reduces their net payable salary (and shows in
+  // the sidebar totals, cash breakdown, and the salary slip).
+  mutateEmps(emps=>{
+    const e=emps.find(x=>x.id===loan.empId);
+    if(e){
+      e.advance=(e.advance||0)+pay;
+      const note=`Loan pay ${pkr(pay)} from ${currentMonth} salary`;
+      e.note=e.note?e.note+' | '+note:note;
+    }
+  });
+
   recordLoanPayment(loanId, amount, 'manual', currentMonth);
+  updateNextMonthCarriedDebt();
   closeLoanModalForce();
+  renderAll();
 }
 
 function openLoanDetailForEmp(empId){
