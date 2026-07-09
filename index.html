@@ -1376,7 +1376,8 @@ const gross=days>=WORK_DAYS
     <div class="calc-row"><span class="label">Monthly salary</span><span class="val b">${pkr(monthly)}</span></div>
     <div class="calc-row"><span class="label">Per day rate (÷26)</span><span class="val">${pkr(monthly/26)}</span></div>
 <div class="calc-row"><span class="label">Days worked (${days}${days>=26?' ✓':' ⚠ deduction'})</span><span class="val b">${pkr(gross)}</span></div>
-    <div class="calc-row"><span class="label">Advance + food</span><span class="val o">- ${pkr(advance)} ${advanceInput>0?`(Rs ${pkr(currentAdvance)} + Rs ${pkr(advanceInput)})`:''}</span></div>
+    <div class="calc-row"><span class="label">Advance + food${partialInput>0?' (this month)':''}</span><span class="val o">- ${pkr(effectiveAdvance)} ${advanceInput>0?`(Rs ${pkr(currentAdvance)} + Rs ${pkr(advanceInput)})`:''}</span></div>
+    ${carryForward>0?`<div class="calc-row"><span class="label" style="color:var(--red)">↳ Carried to next month</span><span class="val r">Rs ${pkr(carryForward)}</span></div>`:''}
     <div class="calc-row"><span class="label">Fine / uniform</span><span class="val o">- ${pkr(fine)}</span></div>
     ${carriedDebt>0?`<div class="calc-row"><span class="label" style="color:var(--red)">Previous month debt</span><span class="val r">- ${pkr(carriedDebt)}</span></div>`:''}
     ${addMoney>0?`<div class="calc-row"><span class="label">Extra (${addReason||'Bonus'})</span><span class="val g">+ ${pkr(addMoney)}</span></div>`:''}
@@ -1391,7 +1392,7 @@ const gross=days>=WORK_DAYS
 Employee: ${name||'—'}
 Monthly: ${pkr(monthly)} | Days: ${days}
 Gross: ${pkr(gross)}
-Advance+Food: ${pkr(advance)} | Fine: ${pkr(fine)}
+Advance+Food: ${pkr(effectiveAdvance)}${carryForward>0?' (Rs '+pkr(carryForward)+' carried fwd)':''} | Fine: ${pkr(fine)}
 `+
     (carriedDebt>0?`Previous Debt: ${pkr(carriedDebt)}
 `:``)+
@@ -1454,6 +1455,12 @@ function doSave(sd){
     const totalAdv = savedEmp.advance || 0;
     const carry = Math.max(0, totalAdv - partial);
     if(carry > 0){
+      // Actually reduce THIS month's advance to only what's being deducted now
+      mutateEmps(emps => {
+        emps[sd.drawerIdx].advance = partial;
+        const carryNote = `Rs ${carry.toLocaleString('en-PK')} carried to next month`;
+        emps[sd.drawerIdx].note = emps[sd.drawerIdx].note ? emps[sd.drawerIdx].note+' | '+carryNote : carryNote;
+      });
       const next = getNextMonth(currentMonth);
       if(next){
         const nextRaw = localStorage.getItem(storageKey(next));
