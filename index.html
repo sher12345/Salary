@@ -416,7 +416,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Employee
     </button>
-    <button class="btn btn-ghost" onclick="resetToDefault()">Reset April</button>
+    <button class="btn btn-ghost" id="resetBtn" onclick="resetToDefault()">Reset April</button>
     <button class="btn btn-accent" onclick="handlePrint()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Print
@@ -1127,7 +1127,14 @@ function switchMonth(key){
   selectedIds.clear();
   buildMonthTabs();
   renderAll();
+  updateResetButtonLabel(); // ← add this
 }
+
+function updateResetButtonLabel(){
+  const btn = document.getElementById('resetBtn');
+  if(btn) btn.textContent = currentMonth === 'April-2026' ? 'Reset April' : 'Reset ' + currentMonth.replace('-',' ');
+}
+
 
 // ══════════════════════════════════════════════
 //  STATS
@@ -2026,9 +2033,27 @@ function addEmployee(){
 }
 
 function resetToDefault(){
-  if(!confirm('Reset to April 2026 default data?')) return;
-  saveEmployees('April-2026', JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)));
-  currentMonth='April-2026'; buildMonthTabs(); renderAll(); toast('Reset to April 2026','orange');
+  const label = currentMonth.replace('-',' ');
+  const isBaseMonth = currentMonth === 'April-2026';
+
+  const msg = isBaseMonth
+    ? `Reset ${label} to the original default employee data? This discards all edits made to ${label}.`
+    : `Reset ${label}? This clears all edits for ${label} and rebuilds it fresh from the previous month's carried-forward balances.`;
+
+  if(!confirm(msg)) return;
+
+  if(isBaseMonth){
+    saveEmployees('April-2026', JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)).map(e=>({...e, carriedDebt:0, excluded:false})));
+  } else {
+    // Drop this month's saved data entirely so loadEmployees()
+    // regenerates it from scratch off the previous month.
+    localStorage.removeItem(storageKey(currentMonth));
+    loadEmployees(currentMonth); // triggers regeneration + save
+  }
+
+  buildMonthTabs();
+renderAll();
+updateResetButtonLabel();
 }
 
 document.getElementById('addModal').addEventListener('click',e=>{ if(e.target===document.getElementById('addModal')) closeAddModal(); });
@@ -2313,6 +2338,7 @@ document.getElementById('ln-date').value=new Date().toISOString().split('T')[0];
 initLoanIdCounter();
 buildMonthTabs();
 renderAll();
+updateResetButtonLabel(); // ← add this
 function toggleExclude(idx){
   mutateEmps(emps => {
     emps[idx].excluded = !emps[idx].excluded;
