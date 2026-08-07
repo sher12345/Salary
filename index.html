@@ -1953,6 +1953,16 @@ function openLoanDetailModal(loanId){
     </div>`;
   document.getElementById('loanDetailModal').classList.add('open');
 }
+function submitLoanPayment(loanId){
+  const amount=+document.getElementById('lm-pay-amount').value||0;
+  if(!amount){ toast('Enter a payment amount','orange'); return; }
+  const loans=loadLoans();
+  const loan=loans.find(l=>l.id===loanId);
+  if(!loan){ toast('Loan not found','orange'); return; }
+  if(loan.repayments.some(r=>r.month===currentMonth)){
+    if(!confirm('A payment was already recorded for this loan this month. Add another?')) return;
+  }
+}
 
 function submitLoanPayment(loanId){
   const amount=+document.getElementById('lm-pay-amount').value||0;
@@ -2051,9 +2061,10 @@ function resetToDefault(){
     loadEmployees(currentMonth); // triggers regeneration + save
   }
 
-  buildMonthTabs();
+buildMonthTabs();
 renderAll();
 updateResetButtonLabel();
+updateNextMonthCarriedDebt(); // ← add this
 }
 
 document.getElementById('addModal').addEventListener('click',e=>{ if(e.target===document.getElementById('addModal')) closeAddModal(); });
