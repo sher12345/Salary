@@ -987,33 +987,24 @@ function loadEmployees(month){
     const prevRaw = localStorage.getItem(storageKey(prev));
     if(prevRaw){
       const prevEmps = JSON.parse(prevRaw);
-      const copied = prevEmps.map(e => {
-        const perDay = e.monthly / 26;
-const gross = e.days >= 26
-  ? Math.round(e.monthly + (e.days - 26) * perDay)
-  : Math.round(e.days * perDay);
-        // Calculate previous month's net to find carried debt
-        const prevAdvance = (e.advance || 0);
-        const prevFine = (e.fine || 0);
-        const prevAddMoney = (e.addMoney || 0);
-        const prevCarriedDebt = (e.carriedDebt || 0);
-        const prevNet = gross - prevAdvance - prevFine - prevCarriedDebt + prevAddMoney;
-        const newCarriedDebt = prevNet < 0 ? Math.abs(prevNet) : 0;
+      const copied = prevEmps
+  .map(e => {
+    const c = calcEmp(e); // respects 'Left' status (gross=0, net = -(carriedDebt+fine))
+    const newCarriedDebt = c.net < 0 ? Math.abs(c.net) : 0;
+    return {
+      ...e,
+      carriedDebt: newCarriedDebt,
+      advance: 0, fine: 0,
+      note: newCarriedDebt > 0 ? `Owes from ${prev}: Rs ${newCarriedDebt.toLocaleString('en-PK')}` : '',
+      days: 30, addMoney: 0, addReason: ''
+    };
+  })
+  // Drop employees who've left AND have no outstanding balance —
+  // they shouldn't keep reappearing every month forever.
+  .filter(e => e.status !== 'Left' || e.carriedDebt > 0);
 
-        return {
-          ...e,
-          // carriedDebt accumulates: previous carried + new negative net
-          carriedDebt: newCarriedDebt,
-          advance: 0,        // Fresh month, new advances start at 0
-          fine: 0,           // Fresh month, fines reset
-          note: newCarriedDebt > 0 ? `Owes from ${prev}: Rs ${newCarriedDebt.toLocaleString('en-PK')}` : '',
-          days: 30,
-          addMoney: 0,
-          addReason: ''
-        };
-      });
-      saveEmployees(month, copied);
-      return copied;
+saveEmployees(month, copied);
+return copied;
     }
   }
   return JSON.parse(JSON.stringify(DEFAULT_EMPLOYEES)).map(e=>({...e, advance:0, fine:0, note:'', days:30, carriedDebt: 0}));
@@ -1493,43 +1484,72 @@ function doSave(sd){
 }
 
 function updateNextMonthCarriedDebt(){
-  // Find next month
-  const next = getNextMonth(currentMonth);
+  propagateForward(currentMonth);
+}
+
+function propagateForward(fromMonth){
+  const next = getNextMonth(fromMonth);
   if(!next) return;
 
   const nextRaw = localStorage.getItem(storageKey(next));
-  if(!nextRaw) return; // Next month doesn't exist yet, nothing to update
+  if(!nextRaw) return; // Next month doesn't exist yet — loadEmployees() builds it correctly whenever it's first opened
 
-  const nextEmps = JSON.parse(nextRaw);
-  const currentEmps = getEmps();
+  const fromEmps = loadEmployees(fromMonth);
+  let nextEmps = JSON.parse(nextRaw);
   let updated = false;
 
-  nextEmps.forEach(nextEmp => {
-    const currEmp = currentEmps.find(e => e.id === nextEmp.id);
-    if(!currEmp) return;
+  // Work out, for every employee in the FROM month, what they should
+  // look like in the NEXT month (carried debt, and whether they should
+  // even still exist there).
+  const projected = fromEmps.map(e => {
+    const c = calcEmp(e); // uses e.status, correctly handles 'Left'
+    const newCarriedDebt = c.net < 0 ? Math.abs(c.net) : 0;
+    return {
+      ...e,
+      carriedDebt: newCarriedDebt,
+      _shouldCarry: e.status !== 'Left' || newCarriedDebt > 0
+    };
+  });
 
-    // Recalculate what should be carried from current month
-    const perDay = currEmp.monthly / 26;
-const gross = currEmp.days >= 26
-  ? Math.round(currEmp.monthly + (currEmp.days - 26) * perDay)
-  : Math.round(currEmp.days * perDay);
-    const totalDeductions = (currEmp.advance || 0) + (currEmp.fine || 0) + (currEmp.carriedDebt || 0);
-    const net = gross - totalDeductions + (currEmp.addMoney || 0);
-    const newCarriedDebt = net < 0 ? Math.abs(net) : 0;
-
-    if(newCarriedDebt !== (nextEmp.carriedDebt || 0)){
-      nextEmp.carriedDebt = newCarriedDebt;
-      nextEmp.note = newCarriedDebt > 0 
-        ? `Owes from ${currentMonth}: Rs ${newCarriedDebt.toLocaleString('en-PK')}` 
-        : '';
+  // 1) Add new hires that don't exist yet in next month,
+  //    and update carriedDebt for ones that already do.
+  projected.forEach(p => {
+    if(!p._shouldCarry) return;
+    const nextEmp = nextEmps.find(e => e.id === p.id);
+    if(!nextEmp){
+      nextEmps.push({
+        ...p,
+        advance: 0, fine: 0, addMoney: 0, addReason: '', days: 30,
+        note: p.carriedDebt > 0
+          ? `Owes from ${fromMonth}: Rs ${p.carriedDebt.toLocaleString('en-PK')}`
+          : ''
+      });
+      updated = true;
+    } else if((nextEmp.carriedDebt || 0) !== p.carriedDebt){
+      nextEmp.carriedDebt = p.carriedDebt;
+      nextEmp.note = p.carriedDebt > 0
+        ? `Owes from ${fromMonth}: Rs ${p.carriedDebt.toLocaleString('en-PK')}`
+        : nextEmp.note;
       updated = true;
     }
   });
 
+  // 2) Remove employees who left with zero balance — they shouldn't
+  //    keep reappearing in future months.
+  const removeIds = projected.filter(p => !p._shouldCarry).map(p => p.id);
+  if(removeIds.length){
+    const before = nextEmps.length;
+    nextEmps = nextEmps.filter(e => !removeIds.includes(e.id));
+    if(nextEmps.length !== before) updated = true;
+  }
+
   if(updated){
     saveEmployees(next, nextEmps);
-    toast(`Updated ${next} carried debt from ${currentMonth}`,'green');
+    toast(`Updated ${next} from ${fromMonth}`,'green');
   }
+
+  // Keep cascading in case a month further ahead was already generated too
+  propagateForward(next);
 }
 
 function getNextMonth(m){
